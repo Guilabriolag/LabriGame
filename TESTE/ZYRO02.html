@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ZYRO v0.2 - Sobrevivência Espacial</title>
+    <title>ZYRO - Sobrevivência Espacial</title>
     <style>
         body {
             box-sizing: border-box;
@@ -385,23 +385,6 @@
         </div>
     </div>
 
-    <!-- Interface da Oficina -->
-    <div id="workshop-interface" class="interface-panel">
-        <button class="close-button" onclick="closeInterface('workshop-interface')">&times;</button>
-        <div class="interface-header">🔧 OFICINA DE CONSTRUÇÃO</div>
-        <div class="interface-content" style="text-align:center;">
-            <div class="status-card">
-                <h3>🛠️ Receitas Disponíveis</h3>
-                <p>💊 Kit Médico: 1 Água + 1 Batata</p>
-                <p>🌿 Filtro de O²: 1 Planta + 1 Água</p>
-                <p>⚡ Painel Solar: Requer Mochila</p>
-            </div>
-            <button class="action-button" onclick="craftItem('medkit')">💊 Criar Kit Médico</button>
-            <button class="action-button" onclick="craftItem('filter')">🌿 Criar Filtro de O²</button>
-            <button class="action-button" onclick="craftItem('solar')">⚡ Montar Painel Solar</button>
-        </div>
-    </div>
-
     <canvas id="game"></canvas>
 
     <script>
@@ -411,12 +394,12 @@
         canvas.height = window.innerHeight;
 
         // Configuração do mundo
-        const AREA_WIDTH = 3000, AREA_HEIGHT = 2000;
+        const AREA_WIDTH = 1200, AREA_HEIGHT = 800;
 
         // Player e sistema de sobrevivência
         let player = {
-            x: 1500,
-            y: 1000,
+            x: 600,
+            y: 400,
             r: 25,
             speed: 4,
             inventory: [],
@@ -425,8 +408,7 @@
             hunger: 80,
             thirst: 60,
             oxygen: 90,
-            energy: 70,
-            health: 100
+            energy: 70
         };
 
         // Recursos e equipamentos
@@ -438,236 +420,60 @@
             lastSurvivalUpdate: Date.now()
         };
 
-        // Sistema de Missões
-        let missions = [
-            { id: 1, text: "Explore a Mina de Água 💧", completed: false },
-            { id: 2, text: "Colete 5 unidades de Água 💧", completed: false },
-            { id: 3, text: "Plante e colha uma Batata 🥔", completed: false },
-            { id: 4, text: "Equipe uma Mochila 🎒", completed: false },
-            { id: 5, text: "Repare o Módulo da Nave ⚡", completed: false }
-        ];
-
-        // Exibir painel lateral
-        const missionPanel = document.createElement("div");
-        missionPanel.id = "mission-panel";
-        missionPanel.style.cssText = `
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            border: 2px solid #00bfff;
-            color: white;
-            font: 12px Arial;
-            border-radius: 10px;
-            padding: 10px;
-            z-index: 200;
-            width: 220px;
-        `;
-        document.body.appendChild(missionPanel);
-
-        function updateMissions() {
-            missionPanel.innerHTML = "<b>📜 Missões</b><br>";
-            let completedCount = 0;
-            missions.forEach(m => {
-                if (m.completed) completedCount++;
-                missionPanel.innerHTML += (m.completed ? "✅ " : "🔸 ") + m.text + "<br>";
-            });
-            missionPanel.innerHTML += `<hr>Progresso: ${completedCount}/${missions.length}`;
-        }
-
         // Pontos de interesse
         let pointsOfInterest = [
-            {x: 1500, y: 1000, type: "ship", name: "Nave Danificada", icon: "🚀", color: "#ff6b35"},
-            {x: 500, y: 400, type: "water", name: "Mina de Água", icon: "💧", color: "#4fc3f7"},
-            {x: 2500, y: 400, type: "oxygen", name: "Ponto de O²", icon: "🌿", color: "#66bb6a"},
-            {x: 500, y: 1600, type: "bunker", name: "Bunker Agrícola", icon: "🏠", color: "#8b4513"},
-            {x: 2500, y: 1600, type: "equipment", name: "Equipamentos", icon: "🎒", color: "#ffa726"},
-            {x: 1500, y: 1800, type: "workshop", name: "Oficina", icon: "🔧", color: "#9ca3af"},
-            {x: 800, y: 800, type: "crystal", name: "Cristais Raros", icon: "💎", color: "#e879f9"},
-            {x: 2200, y: 800, type: "ruins", name: "Ruínas Antigas", icon: "🏛️", color: "#a78bfa"},
-            {x: 1200, y: 200, type: "mountain", name: "Montanha", icon: "⛰️", color: "#6b7280"},
-            {x: 300, y: 1200, type: "forest", name: "Floresta Alienígena", icon: "🌲", color: "#10b981"}
+            {x: 600, y: 400, type: "ship", name: "Nave Danificada", icon: "🚀", color: "#ff6b35"},
+            {x: 200, y: 200, type: "water", name: "Mina de Água", icon: "💧", color: "#4fc3f7"},
+            {x: 1000, y: 200, type: "oxygen", name: "Ponto de O²", icon: "🌿", color: "#66bb6a"},
+            {x: 200, y: 600, type: "bunker", name: "Bunker Agrícola", icon: "🏠", color: "#8b4513"},
+            {x: 1000, y: 600, type: "equipment", name: "Equipamentos", icon: "🎒", color: "#ffa726"}
         ];
-
-        // Criaturas Alienígenas
-        let enemies = [
-            { x: 1000, y: 700, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
-            { x: 2000, y: 1200, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
-            { x: 700, y: 1400, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
-            { x: 2200, y: 600, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
-            { x: 1800, y: 300, hp: 30, maxHp: 30, active: true, lastAttack: 0 }
-        ];
-
-        function drawEnemies() {
-            enemies.forEach(e => {
-                if (!e.active) return;
-                
-                // Seguir o jogador
-                const dx = player.x - e.x;
-                const dy = player.y - e.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                
-                if (dist < 200) {
-                    e.x += dx / dist * 0.5;
-                    e.y += dy / dist * 0.5;
-                    
-                    // Atacar se próximo
-                    if (dist < 50 && Date.now() - e.lastAttack > 2000) {
-                        player.health = Math.max(0, player.health - 10);
-                        e.lastAttack = Date.now();
-                        showMessage("👾 Criatura alienígena atacou!");
-                        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                    }
-                }
-                
-                // Desenhar alien
-                ctx.fillStyle = "#8b0000";
-                ctx.beginPath();
-                ctx.arc(e.x, e.y, 20, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = "#ff0000";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Barra de HP
-                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-                ctx.fillRect(e.x - 25, e.y - 35, 50, 8);
-                ctx.fillStyle = "#ff0000";
-                ctx.fillRect(e.x - 23, e.y - 33, (e.hp / e.maxHp) * 46, 4);
-                
-                // Olhos amarelos
-                ctx.fillStyle = "#ffff00";
-                ctx.beginPath();
-                ctx.arc(e.x - 8, e.y - 5, 3, 0, Math.PI * 2);
-                ctx.arc(e.x + 8, e.y - 5, 3, 0, Math.PI * 2);
-                ctx.fill();
-            });
-        }
 
         // Câmera
         let cam = { x: 0, y: 0 };
-
-        // Ciclo de Dia e Noite
-        let timeOfDay = 12; // 0–24
-
-        function updateDayCycle() {
-            timeOfDay = (timeOfDay + 0.01) % 24;
-            const isNight = timeOfDay >= 18 || timeOfDay < 6;
-            
-            // Ajustar brilho
-            const brightness = isNight ? 0.6 : 1;
-            canvas.style.filter = `brightness(${brightness})`;
-            
-            // Efeitos noturnos
-            if (isNight && Math.random() < 0.001) {
-                showMessage("🌒 A noite cai... o frio aumenta.");
-                player.energy = Math.max(0, player.energy - 2);
-            }
-        }
 
         // Controles do joystick
         const joystick = document.getElementById("joystick");
         const stick = document.getElementById("stick");
         let joy = { active: false, x: 0, y: 0 };
 
-        // Touch events para joystick
-        joystick.addEventListener("touchstart", handleJoystickStart);
-        joystick.addEventListener("touchend", handleJoystickEnd);
-        joystick.addEventListener("touchmove", handleJoystickMove);
-
-        // Mouse events para desktop
-        joystick.addEventListener("mousedown", handleJoystickStart);
-        document.addEventListener("mouseup", handleJoystickEnd);
-        document.addEventListener("mousemove", handleJoystickMove);
-
-        function handleJoystickStart(e) {
+        joystick.addEventListener("touchstart", e => {
             e.preventDefault();
             joy.active = true;
             if (navigator.vibrate) navigator.vibrate(10);
-        }
+        });
 
-        function handleJoystickEnd(e) {
+        joystick.addEventListener("touchend", e => {
             e.preventDefault();
             joy.active = false;
             stick.style.left = "50%";
             stick.style.top = "50%";
             joy.x = 0;
             joy.y = 0;
-        }
+        });
 
-        function handleJoystickMove(e) {
+        joystick.addEventListener("touchmove", e => {
             e.preventDefault();
             if (!joy.active) return;
             
             const rect = joystick.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            
-            let dx = clientX - (rect.left + rect.width / 2);
-            let dy = clientY - (rect.top + rect.height / 2);
-            const dist = Math.min(Math.sqrt(dx * dx + dy * dy), rect.width / 2 - 10);
+            const touch = e.touches[0];
+            let dx = touch.clientX - (rect.left + rect.width / 2);
+            let dy = touch.clientY - (rect.top + rect.height / 2);
+            const dist = Math.min(Math.sqrt(dx * dx + dy * dy), rect.width / 2);
             const angle = Math.atan2(dy, dx);
             
             stick.style.left = rect.width / 2 + dist * Math.cos(angle) + "px";
             stick.style.top = rect.height / 2 + dist * Math.sin(angle) + "px";
-            joy.x = Math.cos(angle) * (dist / (rect.width / 2 - 10));
-            joy.y = Math.sin(angle) * (dist / (rect.width / 2 - 10));
-        }
-
-        // Função de ataque
-        function attackNearestEnemy() {
-            const nearest = enemies.find(e => e.active && Math.hypot(player.x - e.x, player.y - e.y) < 100);
-            if (nearest) {
-                nearest.hp -= 15;
-                showMessage("💥 Ataque alienígena!");
-                if (navigator.vibrate) navigator.vibrate(30);
-                if (nearest.hp <= 0) {
-                    nearest.active = false;
-                    showMessage("👾 Inimigo derrotado! +1 recurso raro");
-                    if (player.inventory.length < player.maxInventory) {
-                        player.inventory.push("💎");
-                    }
-                }
-                return true;
-            }
-            return false;
-        }
-
-        // Controles de teclado para desktop
-        let keys = {};
-        document.addEventListener("keydown", e => {
-            keys[e.key.toLowerCase()] = true;
-            
-            // Ações dos botões
-            if (e.key === " " || e.key === "Enter") { // Botão A
-                e.preventDefault();
-                if (!attackNearestEnemy()) {
-                    interactWithNearestPOI();
-                }
-            } else if (e.key === "i" || e.key === "I") { // Botão B - Inventário
-                e.preventDefault();
-                showMessage("📦 Inventário: " + player.inventory.length + "/" + player.maxInventory);
-            } else if (e.key === "m" || e.key === "M") { // Botão C - Mapa
-                e.preventDefault();
-                showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒 Oficina🔧 Cristais💎 Ruínas🏛️");
-            } else if (e.key === "s" || e.key === "S") { // Botão D - Scan
-                e.preventDefault();
-                scanArea();
-            }
+            joy.x = Math.cos(angle) * (dist / (rect.width / 2));
+            joy.y = Math.sin(angle) * (dist / (rect.width / 2));
         });
 
-        document.addEventListener("keyup", e => {
-            keys[e.key.toLowerCase()] = false;
-        });
-
-        // Botões de ação (touch)
+        // Botões de ação
         document.getElementById("buttonA").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(20);
-            if (!attackNearestEnemy()) {
-                interactWithNearestPOI();
-            }
+            interactWithNearestPOI();
         });
 
         document.getElementById("buttonB").addEventListener("touchstart", e => {
@@ -679,7 +485,7 @@
         document.getElementById("buttonC").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(15);
-            showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒 Oficina🔧 Cristais💎 Ruínas🏛️");
+            showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒");
         });
 
         document.getElementById("buttonD").addEventListener("touchstart", e => {
@@ -723,9 +529,6 @@
                         gameState.water += 3;
                         player.inventory.push("💧");
                         showMessage("💧 Coletou 3 unidades de água!");
-                        missions[0].completed = true; // Explorou a mina
-                        if (gameState.water >= 5) missions[1].completed = true; // Coletou 5 águas
-                        updateMissions();
                         if (navigator.vibrate) navigator.vibrate(30);
                     } else {
                         showMessage("❌ Inventário cheio!");
@@ -760,54 +563,11 @@
                         showMessage("❌ Inventário cheio!");
                     }
                     break;
-                    
-                case "workshop":
-                    document.getElementById("workshop-interface").style.display = "block";
-                    break;
-                    
-                case "crystal":
-                    if (player.inventory.length < player.maxInventory) {
-                        player.inventory.push("💎");
-                        showMessage("💎 Coletou cristal raro! Energia valiosa.");
-                        player.energy = Math.min(100, player.energy + 25);
-                        if (navigator.vibrate) navigator.vibrate(50);
-                    } else {
-                        showMessage("❌ Inventário cheio!");
-                    }
-                    break;
-                    
-                case "ruins":
-                    if (player.inventory.length < player.maxInventory) {
-                        player.inventory.push("🏛️");
-                        showMessage("🏛️ Descobriu artefato antigo! Conhecimento adquirido.");
-                        if (navigator.vibrate) navigator.vibrate(40);
-                    } else {
-                        showMessage("❌ Inventário cheio!");
-                    }
-                    break;
-                    
-                case "mountain":
-                    showMessage("⛰️ Vista panorâmica! Você pode ver todo o planeta daqui.");
-                    player.oxygen = Math.min(100, player.oxygen + 10);
-                    break;
-                    
-                case "forest":
-                    if (player.inventory.length < player.maxInventory) {
-                        player.inventory.push("🌲");
-                        showMessage("🌲 Coletou madeira alienígena! Material de construção.");
-                        player.oxygen = Math.min(100, player.oxygen + 15);
-                        if (navigator.vibrate) navigator.vibrate(25);
-                    } else {
-                        showMessage("❌ Inventário cheio!");
-                    }
-                    break;
             }
         }
 
         function scanArea() {
             let nearbyPOIs = [];
-            let nearbyEnemies = 0;
-            
             pointsOfInterest.forEach(poi => {
                 let dx = player.x - poi.x;
                 let dy = player.y - poi.y;
@@ -818,30 +578,11 @@
                 }
             });
             
-            enemies.forEach(e => {
-                if (e.active) {
-                    let dx = player.x - e.x;
-                    let dy = player.y - e.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 200) {
-                        nearbyEnemies++;
-                    }
-                }
-            });
-            
-            let message = "🔍 Detectado: ";
             if (nearbyPOIs.length > 0) {
-                message += nearbyPOIs.join(", ");
+                showMessage("🔍 Detectado: " + nearbyPOIs.join(", "));
+            } else {
+                showMessage("🔍 Nenhum ponto de interesse detectado");
             }
-            if (nearbyEnemies > 0) {
-                message += (nearbyPOIs.length > 0 ? ", " : "") + `${nearbyEnemies} inimigo(s)`;
-            }
-            if (nearbyPOIs.length === 0 && nearbyEnemies === 0) {
-                message = "🔍 Nenhum ponto de interesse detectado";
-            }
-            
-            showMessage(message);
         }
 
         // Funções da interface da nave
@@ -880,8 +621,6 @@
                 player.inventory.splice(backpackIndex, 1);
                 player.backpack = "equipped";
                 player.maxInventory = 15;
-                missions[3].completed = true; // Equipou mochila
-                updateMissions();
                 showMessage("🎒 Mochila equipada! +5 slots de inventário");
                 updateShipInterface();
             } else if (player.backpack) {
@@ -1041,8 +780,6 @@
             if (plot.type === "potato") {
                 player.inventory.push("🥔");
                 gameState.potatoSeeds += 2; // Sementes extras
-                missions[2].completed = true; // Colheu batata
-                updateMissions();
                 showMessage("🥔 Colheu batata! +2 sementes extras");
             } else if (plot.type === "oxygen-plant") {
                 player.oxygen = Math.min(100, player.oxygen + 15);
@@ -1070,48 +807,6 @@
             } else {
                 showMessage(`🌾 Colheu ${harvested} plantas!`);
             }
-        }
-
-        // Funções da oficina
-        function craftItem(type) {
-            switch(type) {
-                case "medkit":
-                    if (gameState.water >= 1 && player.inventory.includes("🥔")) {
-                        gameState.water--;
-                        player.inventory.splice(player.inventory.indexOf("🥔"), 1);
-                        player.hunger = Math.min(100, player.hunger + 20);
-                        player.health = Math.min(100, player.health + 30);
-                        showMessage("💊 Kit Médico criado e usado!");
-                    } else {
-                        showMessage("❌ Falta Água ou Batata!");
-                    }
-                    break;
-                    
-                case "filter":
-                    if (player.inventory.includes("🌿") && gameState.water >= 1) {
-                        player.inventory.splice(player.inventory.indexOf("🌿"), 1);
-                        gameState.water--;
-                        player.oxygen = Math.min(100, player.oxygen + 30);
-                        showMessage("🌿 Filtro de O² criado e usado!");
-                    } else {
-                        showMessage("❌ Recurso insuficiente!");
-                    }
-                    break;
-                    
-                case "solar":
-                    if (player.backpack && player.energy < 100) {
-                        player.energy = Math.min(100, player.energy + 50);
-                        showMessage("⚡ Painel Solar ativado! Energia restaurada.");
-                        missions[4].completed = true; // Reparo da nave
-                        updateMissions();
-                    } else if (!player.backpack) {
-                        showMessage("❌ Você precisa de uma mochila equipada!");
-                    } else {
-                        showMessage("❌ Energia já está cheia!");
-                    }
-                    break;
-            }
-            updateSurvivalHUD();
         }
 
         // Função para fechar interfaces
@@ -1159,37 +854,6 @@
                     }
                 }
             });
-        }
-
-        // Sistema de Salvamento
-        function saveGame() {
-            const saveData = {
-                player,
-                gameState,
-                missions,
-                timeOfDay,
-                enemies
-            };
-            localStorage.setItem("zyroSave", JSON.stringify(saveData));
-        }
-
-        function loadGame() {
-            const saved = localStorage.getItem("zyroSave");
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    Object.assign(player, data.player);
-                    Object.assign(gameState, data.gameState);
-                    missions = data.missions || missions;
-                    timeOfDay = data.timeOfDay || 12;
-                    if (data.enemies) enemies = data.enemies;
-                    showMessage("💾 Progresso carregado!");
-                    updateMissions();
-                    updateSurvivalHUD();
-                } catch (e) {
-                    console.log("Erro ao carregar save:", e);
-                }
-            }
         }
 
         // Funções auxiliares
@@ -1248,26 +912,10 @@
 
         // Loop principal
         function loop() {
-            // Movimentação (joystick + teclado)
-            let moveX = joy.x;
-            let moveY = joy.y;
-            
-            // Controles de teclado WASD/Setas
-            if (keys['w'] || keys['arrowup']) moveY -= 1;
-            if (keys['s'] || keys['arrowdown']) moveY += 1;
-            if (keys['a'] || keys['arrowleft']) moveX -= 1;
-            if (keys['d'] || keys['arrowright']) moveX += 1;
-            
-            // Normalizar movimento diagonal
-            if (moveX !== 0 && moveY !== 0) {
-                const length = Math.sqrt(moveX * moveX + moveY * moveY);
-                moveX /= length;
-                moveY /= length;
-            }
-            
-            if (moveX !== 0 || moveY !== 0) {
-                player.x += moveX * player.speed;
-                player.y += moveY * player.speed;
+            // Movimentação
+            if (joy.x !== 0 || joy.y !== 0) {
+                player.x += joy.x * player.speed;
+                player.y += joy.y * player.speed;
                 
                 // Consumir energia ao se mover
                 player.energy = Math.max(0, player.energy - 0.01);
@@ -1284,8 +932,6 @@
             // Atualizar sistemas
             updateSurvival();
             updatePlants();
-            updateDayCycle();
-            saveGame();
 
             // Limpar tela
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1299,9 +945,6 @@
             
             // Desenhar pontos de interesse
             drawPointsOfInterest();
-            
-            // Desenhar inimigos
-            drawEnemies();
             
             // Desenhar player
             drawPlayer();
@@ -1339,25 +982,15 @@
             ctx.strokeStyle = "rgba(139, 115, 85, 0.6)";
             ctx.lineWidth = 8;
             ctx.beginPath();
-            // Conectar nave com outros pontos principais
-            ctx.moveTo(1500, 1000);
-            ctx.lineTo(500, 400); // Para mina de água
-            ctx.moveTo(1500, 1000);
-            ctx.lineTo(2500, 400); // Para ponto de O²
-            ctx.moveTo(1500, 1000);
-            ctx.lineTo(500, 1600); // Para bunker
-            ctx.moveTo(1500, 1000);
-            ctx.lineTo(2500, 1600); // Para equipamentos
-            ctx.moveTo(1500, 1000);
-            ctx.lineTo(1500, 1800); // Para oficina
-            
-            // Caminhos secundários
-            ctx.moveTo(800, 800);
-            ctx.lineTo(1200, 200); // Cristais para montanha
-            ctx.moveTo(2200, 800);
-            ctx.lineTo(2500, 400); // Ruínas para O²
-            ctx.moveTo(300, 1200);
-            ctx.lineTo(500, 1600); // Floresta para bunker
+            // Conectar nave com outros pontos
+            ctx.moveTo(600, 400);
+            ctx.lineTo(200, 200); // Para mina de água
+            ctx.moveTo(600, 400);
+            ctx.lineTo(1000, 200); // Para ponto de O²
+            ctx.moveTo(600, 400);
+            ctx.lineTo(200, 600); // Para bunker
+            ctx.moveTo(600, 400);
+            ctx.lineTo(1000, 600); // Para equipamentos
             ctx.stroke();
         }
 
@@ -1476,20 +1109,21 @@
                     ctx.stroke();
                 }
             }
-            
-            // Barra de vida se ferido
-            if (player.health < 100) {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-                ctx.fillRect(player.x - 30, player.y - 45, 60, 8);
-                ctx.fillStyle = "#ff0000";
-                ctx.fillRect(player.x - 28, player.y - 43, (player.health / 100) * 56, 4);
-            }
         }
 
+        // Adicionar animação CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeMessage {
+                0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
+
         // Inicialização
-        loadGame();
-        updateMissions();
-        showMessage("🚀 Bem-vindo ao ZYRO v0.2! Sobreviva e complete as missões!");
+        showMessage("🚀 Bem-vindo ao planeta ZYRO! Sobreviva coletando recursos!");
         loop();
 
         // Prevenção de scroll
@@ -1497,8 +1131,8 @@
             e.preventDefault();
         }, { passive: false });
 
-        console.log("🌍 ZYRO v0.2 - Sistema completo carregado!");
-        console.log("🎮 Novidades: Missões📜 Dia/Noite🌗 Inimigos👾 Oficina🔧 Salvamento💾");
+        console.log("🌍 ZYRO - Sistema de sobrevivência carregado!");
+        console.log("🎮 Explore os pontos: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒");
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac663c21cbffb4',t:'MTc1OTgyOTYzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac0a3a7773ffb4',t:'MTc1OTgyNTg2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

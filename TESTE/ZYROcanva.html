@@ -411,12 +411,12 @@
         canvas.height = window.innerHeight;
 
         // Configuração do mundo
-        const AREA_WIDTH = 1200, AREA_HEIGHT = 800;
+        const AREA_WIDTH = 3000, AREA_HEIGHT = 2000;
 
         // Player e sistema de sobrevivência
         let player = {
-            x: 600,
-            y: 400,
+            x: 1500,
+            y: 1000,
             r: 25,
             speed: 4,
             inventory: [],
@@ -478,18 +478,25 @@
 
         // Pontos de interesse
         let pointsOfInterest = [
-            {x: 600, y: 400, type: "ship", name: "Nave Danificada", icon: "🚀", color: "#ff6b35"},
-            {x: 200, y: 200, type: "water", name: "Mina de Água", icon: "💧", color: "#4fc3f7"},
-            {x: 1000, y: 200, type: "oxygen", name: "Ponto de O²", icon: "🌿", color: "#66bb6a"},
-            {x: 200, y: 600, type: "bunker", name: "Bunker Agrícola", icon: "🏠", color: "#8b4513"},
-            {x: 1000, y: 600, type: "equipment", name: "Equipamentos", icon: "🎒", color: "#ffa726"},
-            {x: 600, y: 700, type: "workshop", name: "Oficina", icon: "🔧", color: "#9ca3af"}
+            {x: 1500, y: 1000, type: "ship", name: "Nave Danificada", icon: "🚀", color: "#ff6b35"},
+            {x: 500, y: 400, type: "water", name: "Mina de Água", icon: "💧", color: "#4fc3f7"},
+            {x: 2500, y: 400, type: "oxygen", name: "Ponto de O²", icon: "🌿", color: "#66bb6a"},
+            {x: 500, y: 1600, type: "bunker", name: "Bunker Agrícola", icon: "🏠", color: "#8b4513"},
+            {x: 2500, y: 1600, type: "equipment", name: "Equipamentos", icon: "🎒", color: "#ffa726"},
+            {x: 1500, y: 1800, type: "workshop", name: "Oficina", icon: "🔧", color: "#9ca3af"},
+            {x: 800, y: 800, type: "crystal", name: "Cristais Raros", icon: "💎", color: "#e879f9"},
+            {x: 2200, y: 800, type: "ruins", name: "Ruínas Antigas", icon: "🏛️", color: "#a78bfa"},
+            {x: 1200, y: 200, type: "mountain", name: "Montanha", icon: "⛰️", color: "#6b7280"},
+            {x: 300, y: 1200, type: "forest", name: "Floresta Alienígena", icon: "🌲", color: "#10b981"}
         ];
 
         // Criaturas Alienígenas
         let enemies = [
-            { x: 400, y: 300, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
-            { x: 900, y: 500, hp: 30, maxHp: 30, active: true, lastAttack: 0 }
+            { x: 1000, y: 700, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
+            { x: 2000, y: 1200, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
+            { x: 700, y: 1400, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
+            { x: 2200, y: 600, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
+            { x: 1800, y: 300, hp: 30, maxHp: 30, active: true, lastAttack: 0 }
         ];
 
         function drawEnemies() {
@@ -564,37 +571,49 @@
         const stick = document.getElementById("stick");
         let joy = { active: false, x: 0, y: 0 };
 
-        joystick.addEventListener("touchstart", e => {
+        // Touch events para joystick
+        joystick.addEventListener("touchstart", handleJoystickStart);
+        joystick.addEventListener("touchend", handleJoystickEnd);
+        joystick.addEventListener("touchmove", handleJoystickMove);
+
+        // Mouse events para desktop
+        joystick.addEventListener("mousedown", handleJoystickStart);
+        document.addEventListener("mouseup", handleJoystickEnd);
+        document.addEventListener("mousemove", handleJoystickMove);
+
+        function handleJoystickStart(e) {
             e.preventDefault();
             joy.active = true;
             if (navigator.vibrate) navigator.vibrate(10);
-        });
+        }
 
-        joystick.addEventListener("touchend", e => {
+        function handleJoystickEnd(e) {
             e.preventDefault();
             joy.active = false;
             stick.style.left = "50%";
             stick.style.top = "50%";
             joy.x = 0;
             joy.y = 0;
-        });
+        }
 
-        joystick.addEventListener("touchmove", e => {
+        function handleJoystickMove(e) {
             e.preventDefault();
             if (!joy.active) return;
             
             const rect = joystick.getBoundingClientRect();
-            const touch = e.touches[0];
-            let dx = touch.clientX - (rect.left + rect.width / 2);
-            let dy = touch.clientY - (rect.top + rect.height / 2);
-            const dist = Math.min(Math.sqrt(dx * dx + dy * dy), rect.width / 2);
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            let dx = clientX - (rect.left + rect.width / 2);
+            let dy = clientY - (rect.top + rect.height / 2);
+            const dist = Math.min(Math.sqrt(dx * dx + dy * dy), rect.width / 2 - 10);
             const angle = Math.atan2(dy, dx);
             
             stick.style.left = rect.width / 2 + dist * Math.cos(angle) + "px";
             stick.style.top = rect.height / 2 + dist * Math.sin(angle) + "px";
-            joy.x = Math.cos(angle) * (dist / (rect.width / 2));
-            joy.y = Math.sin(angle) * (dist / (rect.width / 2));
-        });
+            joy.x = Math.cos(angle) * (dist / (rect.width / 2 - 10));
+            joy.y = Math.sin(angle) * (dist / (rect.width / 2 - 10));
+        }
 
         // Função de ataque
         function attackNearestEnemy() {
@@ -615,7 +634,34 @@
             return false;
         }
 
-        // Botões de ação
+        // Controles de teclado para desktop
+        let keys = {};
+        document.addEventListener("keydown", e => {
+            keys[e.key.toLowerCase()] = true;
+            
+            // Ações dos botões
+            if (e.key === " " || e.key === "Enter") { // Botão A
+                e.preventDefault();
+                if (!attackNearestEnemy()) {
+                    interactWithNearestPOI();
+                }
+            } else if (e.key === "i" || e.key === "I") { // Botão B - Inventário
+                e.preventDefault();
+                showMessage("📦 Inventário: " + player.inventory.length + "/" + player.maxInventory);
+            } else if (e.key === "m" || e.key === "M") { // Botão C - Mapa
+                e.preventDefault();
+                showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒 Oficina🔧 Cristais💎 Ruínas🏛️");
+            } else if (e.key === "s" || e.key === "S") { // Botão D - Scan
+                e.preventDefault();
+                scanArea();
+            }
+        });
+
+        document.addEventListener("keyup", e => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        // Botões de ação (touch)
         document.getElementById("buttonA").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(20);
@@ -633,7 +679,7 @@
         document.getElementById("buttonC").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(15);
-            showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒 Oficina🔧");
+            showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒 Oficina🔧 Cristais💎 Ruínas🏛️");
         });
 
         document.getElementById("buttonD").addEventListener("touchstart", e => {
@@ -717,6 +763,43 @@
                     
                 case "workshop":
                     document.getElementById("workshop-interface").style.display = "block";
+                    break;
+                    
+                case "crystal":
+                    if (player.inventory.length < player.maxInventory) {
+                        player.inventory.push("💎");
+                        showMessage("💎 Coletou cristal raro! Energia valiosa.");
+                        player.energy = Math.min(100, player.energy + 25);
+                        if (navigator.vibrate) navigator.vibrate(50);
+                    } else {
+                        showMessage("❌ Inventário cheio!");
+                    }
+                    break;
+                    
+                case "ruins":
+                    if (player.inventory.length < player.maxInventory) {
+                        player.inventory.push("🏛️");
+                        showMessage("🏛️ Descobriu artefato antigo! Conhecimento adquirido.");
+                        if (navigator.vibrate) navigator.vibrate(40);
+                    } else {
+                        showMessage("❌ Inventário cheio!");
+                    }
+                    break;
+                    
+                case "mountain":
+                    showMessage("⛰️ Vista panorâmica! Você pode ver todo o planeta daqui.");
+                    player.oxygen = Math.min(100, player.oxygen + 10);
+                    break;
+                    
+                case "forest":
+                    if (player.inventory.length < player.maxInventory) {
+                        player.inventory.push("🌲");
+                        showMessage("🌲 Coletou madeira alienígena! Material de construção.");
+                        player.oxygen = Math.min(100, player.oxygen + 15);
+                        if (navigator.vibrate) navigator.vibrate(25);
+                    } else {
+                        showMessage("❌ Inventário cheio!");
+                    }
                     break;
             }
         }
@@ -1165,10 +1248,26 @@
 
         // Loop principal
         function loop() {
-            // Movimentação
-            if (joy.x !== 0 || joy.y !== 0) {
-                player.x += joy.x * player.speed;
-                player.y += joy.y * player.speed;
+            // Movimentação (joystick + teclado)
+            let moveX = joy.x;
+            let moveY = joy.y;
+            
+            // Controles de teclado WASD/Setas
+            if (keys['w'] || keys['arrowup']) moveY -= 1;
+            if (keys['s'] || keys['arrowdown']) moveY += 1;
+            if (keys['a'] || keys['arrowleft']) moveX -= 1;
+            if (keys['d'] || keys['arrowright']) moveX += 1;
+            
+            // Normalizar movimento diagonal
+            if (moveX !== 0 && moveY !== 0) {
+                const length = Math.sqrt(moveX * moveX + moveY * moveY);
+                moveX /= length;
+                moveY /= length;
+            }
+            
+            if (moveX !== 0 || moveY !== 0) {
+                player.x += moveX * player.speed;
+                player.y += moveY * player.speed;
                 
                 // Consumir energia ao se mover
                 player.energy = Math.max(0, player.energy - 0.01);
@@ -1240,17 +1339,25 @@
             ctx.strokeStyle = "rgba(139, 115, 85, 0.6)";
             ctx.lineWidth = 8;
             ctx.beginPath();
-            // Conectar nave com outros pontos
-            ctx.moveTo(600, 400);
-            ctx.lineTo(200, 200); // Para mina de água
-            ctx.moveTo(600, 400);
-            ctx.lineTo(1000, 200); // Para ponto de O²
-            ctx.moveTo(600, 400);
-            ctx.lineTo(200, 600); // Para bunker
-            ctx.moveTo(600, 400);
-            ctx.lineTo(1000, 600); // Para equipamentos
-            ctx.moveTo(600, 400);
-            ctx.lineTo(600, 700); // Para oficina
+            // Conectar nave com outros pontos principais
+            ctx.moveTo(1500, 1000);
+            ctx.lineTo(500, 400); // Para mina de água
+            ctx.moveTo(1500, 1000);
+            ctx.lineTo(2500, 400); // Para ponto de O²
+            ctx.moveTo(1500, 1000);
+            ctx.lineTo(500, 1600); // Para bunker
+            ctx.moveTo(1500, 1000);
+            ctx.lineTo(2500, 1600); // Para equipamentos
+            ctx.moveTo(1500, 1000);
+            ctx.lineTo(1500, 1800); // Para oficina
+            
+            // Caminhos secundários
+            ctx.moveTo(800, 800);
+            ctx.lineTo(1200, 200); // Cristais para montanha
+            ctx.moveTo(2200, 800);
+            ctx.lineTo(2500, 400); // Ruínas para O²
+            ctx.moveTo(300, 1200);
+            ctx.lineTo(500, 1600); // Floresta para bunker
             ctx.stroke();
         }
 
@@ -1393,5 +1500,5 @@
         console.log("🌍 ZYRO v0.2 - Sistema completo carregado!");
         console.log("🎮 Novidades: Missões📜 Dia/Noite🌗 Inimigos👾 Oficina🔧 Salvamento💾");
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac29bfe648f1ff',t:'MTc1OTgyNzE1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac663c21cbffb4',t:'MTc1OTgyOTYzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

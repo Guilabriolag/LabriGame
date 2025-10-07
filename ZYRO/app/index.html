@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ZYRO v0.3 - Mapa Infinito</title>
     <style>
-        /* (SEU CSS ORIGINAL - SEM ALTERAÇÕES) */
-        body {
-            box-sizing: border-box;
-        }
-        
+        /* CSS GERAL E ESSENCIAL PARA MOBILE */
         html, body {
             margin: 0;
             padding: 0;
@@ -17,7 +13,7 @@
             height: 100%;
             width: 100%;
             background: #222;
-            /* CRÍTICO PARA MOBILE: Impede o scroll ao tocar */
+            /* CRÍTICO: Impede o scroll da página ao tocar */
             touch-action: none; 
             font-family: 'Orbitron', Arial, sans-serif;
         }
@@ -27,31 +23,27 @@
             background: #4caf50;
         }
 
-        #hud {
+        /* HUDs */
+        #hud, #survival-hud {
             position: absolute;
-            top: env(safe-area-inset-top, 10px);
-            left: 10px;
-            color: white;
-            font: bold 14px Arial;
+            z-index: 100;
             background: rgba(0, 0, 0, 0.8);
+            color: white;
             padding: 8px 12px;
             border-radius: 10px;
             border: 2px solid #00bfff;
-            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
-            z-index: 100;
+        }
+
+        #hud {
+            top: env(safe-area-inset-top, 10px);
+            left: 10px;
+            font: bold 14px Arial;
         }
 
         #survival-hud {
-            position: absolute;
             top: env(safe-area-inset-top, 10px);
             right: 10px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-            border: 2px solid #00bfff;
             font: 12px Arial;
-            z-index: 100;
         }
 
         .survival-bar {
@@ -67,31 +59,29 @@
             height: 100%;
             transition: width 0.3s ease;
         }
+        .hunger { background: linear-gradient(90deg, #ff6b35, #f7931e); }
+        .thirst { background: linear-gradient(90deg, #4fc3f7, #29b6f6); }
+        .oxygen { background: linear-gradient(90deg, #66bb6a, #43a047); }
+        .energy { background: linear-gradient(90deg, #ffa726, #ff9800); }
 
-        .hunger { background: linear-gradient(90deg, #ff6b35, #f7931e);
-        }
-        .thirst { background: linear-gradient(90deg, #4fc3f7, #29b6f6);
-        }
-        .oxygen { background: linear-gradient(90deg, #66bb6a, #43a047);
-        }
-        .energy { background: linear-gradient(90deg, #ffa726, #ff9800);
-        }
+        /* --- CONTROLES - ONDE ESTAVA O PROBLEMA --- */
 
         #joystick {
-            position: absolute;
-            bottom: calc(80px + env(safe-area-inset-bottom, 0));
+            position: absolute; /* CRÍTICO: Posiciona em relação ao corpo */
+            /* Usa calc() e env() para respeitar a barra de navegação/segurança do celular */
+            bottom: calc(80px + env(safe-area-inset-bottom, 0)); 
             left: 30px;
             width: 120px;
             height: 120px;
             background: radial-gradient(circle, rgba(0, 191, 255, 0.3), rgba(0, 191, 255, 0.1));
             border: 3px solid rgba(0, 191, 255, 0.6);
             border-radius: 50%;
-            /* CRÍTICO PARA MOBILE */
-            touch-action: none; 
+            touch-action: none; /* ESSENCIAL para evitar scroll */
+            z-index: 500; /* Garante que fique acima do jogo */
         }
 
         #stick {
-            position: absolute;
+            position: absolute; /* O stick é absoluto em relação ao joystick */
             left: 50%;
             top: 50%;
             width: 50px;
@@ -114,46 +104,25 @@
             line-height: 60px;
             background: rgba(0, 0, 0, 0.8);
             border: 3px solid;
-            /* CRÍTICO PARA MOBILE */
             touch-action: none; 
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 500;
         }
 
         .button:active {
             transform: scale(0.95);
             box-shadow: 0 0 15px;
         }
+        
+        /* Posicionamento dos botões (canto inferior direito) */
+        #buttonA { bottom: calc(80px + env(safe-area-inset-bottom, 0)); right: 140px; background: linear-gradient(135deg, #dc2626, #991b1b); border-color: #ef4444; }
+        #buttonB { bottom: calc(150px + env(safe-area-inset-bottom, 0)); right: 70px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-color: #3b82f6; }
+        #buttonC { bottom: calc(80px + env(safe-area-inset-bottom, 0)); right: 70px; background: linear-gradient(135deg, #16a34a, #15803d); border-color: #22c55e; }
+        #buttonD { bottom: calc(150px + env(safe-area-inset-bottom, 0)); right: 140px; background: linear-gradient(135deg, #ea580c, #c2410c); border-color: #f97316; }
 
-        #buttonA {
-            bottom: calc(80px + env(safe-area-inset-bottom, 0));
-            right: 140px;
-            background: linear-gradient(135deg, #dc2626, #991b1b);
-            border-color: #ef4444;
-        }
-
-        #buttonB {
-            bottom: calc(150px + env(safe-area-inset-bottom, 0));
-            right: 70px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border-color: #3b82f6;
-        }
-
-        #buttonC {
-            bottom: calc(80px + env(safe-area-inset-bottom, 0));
-            right: 70px;
-            background: linear-gradient(135deg, #16a34a, #15803d);
-            border-color: #22c55e;
-        }
-
-        #buttonD {
-            bottom: calc(150px + env(safe-area-inset-bottom, 0));
-            right: 140px;
-            background: linear-gradient(135deg, #ea580c, #c2410c);
-            border-color: #f97316;
-        }
-
+        /* Estilos das Interfaces (Nave, Bunker, Oficina) */
         .interface-panel {
             position: absolute;
             top: 0;
@@ -166,160 +135,28 @@
             z-index: 1000;
             overflow-y: auto;
         }
-
-        .interface-header {
-            background: linear-gradient(90deg, #0ea5e9, #0284c7);
-            padding: 15px;
-            text-align: center;
-            font: bold 18px Arial;
-            border-bottom: 3px solid #00bfff;
-        }
-
-        .interface-content {
-            padding: 20px;
-        }
-
-        .status-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .status-card {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #00bfff;
-        }
-
-        .status-card h3 {
-            margin: 0 0 10px 0;
-            color: #00bfff;
-            font-size: 14px;
-        }
-
-        .equipment-slot {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px dashed #666;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            margin: 10px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .equipment-slot.equipped {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-        }
-
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-            margin: 15px 0;
-        }
-
-        .inventory-slot {
-            aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid #666;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .inventory-slot.filled {
-            border-color: #00bfff;
-            background: rgba(0, 191, 255, 0.2);
-        }
-
-        .action-button {
-            background: linear-gradient(135deg, #00bfff, #0080ff);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font: bold 14px Arial;
-            cursor: pointer;
-            margin: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
-        }
-
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #dc2626;
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font: bold 20px Arial;
-            cursor: pointer;
-        }
-
-        #farming-interface {
-            background: linear-gradient(135deg, #166534, #15803d);
-        }
-
-        .farming-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .farming-plot {
-            aspect-ratio: 1;
-            background: #8b4513;
-            border: 3px solid #654321;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .farming-plot.planted {
-            background: #228b22;
-            border-color: #32cd32;
-        }
-
-        .farming-plot.ready {
-            background: #ffd700;
-            border-color: #ffff00;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { box-shadow: 0 0 5px #ffff00;
-            }
-            to { box-shadow: 0 0 20px #ffff00;
-            }
-        }
-
-        @keyframes fadeMessage {
-            0% { opacity: 0;
-            transform: translateX(-50%) translateY(-20px); }
-            20%, 80% { opacity: 1;
-            transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0;
-            transform: translateX(-50%) translateY(-20px); }
-        }
+        
+        /* ... (Restante do CSS de interfaces, sem mudanças) ... */
+        .interface-header { background: linear-gradient(90deg, #0ea5e9, #0284c7); padding: 15px; text-align: center; font: bold 18px Arial; border-bottom: 3px solid #00bfff; }
+        .interface-content { padding: 20px; }
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .status-card { background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 10px; border: 2px solid #00bfff; }
+        .status-card h3 { margin: 0 0 10px 0; color: #00bfff; font-size: 14px; }
+        .equipment-slot { background: rgba(255, 255, 255, 0.1); border: 2px dashed #666; border-radius: 8px; padding: 20px; text-align: center; margin: 10px 0; cursor: pointer; transition: all 0.3s ease; }
+        .equipment-slot.equipped { border-color: #00ff00; background: rgba(0, 255, 0, 0.1); }
+        .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin: 15px 0; }
+        .inventory-slot { aspect-ratio: 1; background: rgba(255, 255, 255, 0.1); border: 2px solid #666; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
+        .inventory-slot.filled { border-color: #00bfff; background: rgba(0, 191, 255, 0.2); }
+        .action-button { background: linear-gradient(135deg, #00bfff, #0080ff); border: none; color: white; padding: 12px 20px; border-radius: 8px; font: bold 14px Arial; cursor: pointer; margin: 5px; transition: all 0.3s ease; }
+        .action-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4); }
+        .close-button { position: absolute; top: 15px; right: 15px; background: #dc2626; border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font: bold 20px Arial; cursor: pointer; }
+        #farming-interface { background: linear-gradient(135deg, #166534, #15803d); }
+        .farming-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+        .farming-plot { aspect-ratio: 1; background: #8b4513; border: 3px solid #654321; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; position: relative; }
+        .farming-plot.planted { background: #228b22; border-color: #32cd32; }
+        .farming-plot.ready { background: #ffd700; border-color: #ffff00; animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 5px #ffff00; } to { box-shadow: 0 0 20px #ffff00; } }
+        @keyframes fadeMessage { 0% { opacity: 0; transform: translateX(-50%) translateY(-20px); } 20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
     </style>
 </head>
 <body>
@@ -344,32 +181,25 @@
         <div class="interface-content">
             <div class="status-grid">
                 <div class="status-card">
- 
                     <h3>📊 Status Vital</h3>
                     <div>Fome: <span id="hunger-text">80%</span></div>
                     <div>Sede: <span id="thirst-text">60%</span></div>
                     <div>Oxigênio: <span id="oxygen-text">90%</span></div>
-             
                     <div>Energia: <span id="energy-text">70%</span></div>
                 </div>
                 <div class="status-card">
                     <h3>🎒 Equipamentos</h3>
                     <div class="equipment-slot" id="backpack-slot" onclick="equipBackpack()">
-              
-                    <div>Mochila: Nenhuma</div>
+                        <div>Mochila: Nenhuma</div>
                         <div style="font-size: 12px;">Clique para equipar</div>
                     </div>
                 </div>
             </div>
-            
- 
             <div class="status-card">
                 <h3>📦 Inventário (<span id="inv-count">0</span>/<span id="inv-max">10</span>)</h3>
                 <div class="inventory-grid" id="ship-inventory"></div>
             </div>
-            
-            <div style="text-align: center;
-            margin-top: 20px;">
+            <div style="text-align: center; margin-top: 20px;">
                 <button class="action-button" onclick="consumeItem('food')">🍖 Comer</button>
                 <button class="action-button" onclick="consumeItem('water')">💧 Beber</button>
                 <button class="action-button" onclick="rest()">😴 Descansar</button>
@@ -377,8 +207,7 @@
         </div>
     </div>
 
-    <div id="bunker-interface" class="interface-panel" style="background: linear-gradient(135deg, #166534, 
-    #15803d);">
+    <div id="bunker-interface" class="interface-panel" style="background: linear-gradient(135deg, #166534, #15803d);">
         <button class="close-button" onclick="closeInterface('bunker-interface')">&times;</button>
         <div class="interface-header">🏠 BUNKER AGRÍCOLA - SISTEMA DE CULTIVO</div>
         <div class="interface-content">
@@ -386,23 +215,17 @@
                 <h3>🌱 Plantação Hidropônica</h3>
                 <div class="farming-grid" id="farming-plots"></div>
             </div>
-     
-        
-            <div style="text-align: center;
-            margin-top: 20px;">
+            <div style="text-align: center; margin-top: 20px;">
                 <button class="action-button" onclick="plantCrop('potato')">🥔 Plantar Batata</button>
                 <button class="action-button" onclick="plantCrop('oxygen-plant')">🌿 Plantar O² Plant</button>
                 <button class="action-button" onclick="waterPlants()">💧 Regar Plantas</button>
                 <button class="action-button" onclick="harvestAll()">🌾 Colher Tudo</button>
             </div>
-      
-       
             <div class="status-card" style="margin-top: 20px;">
                 <h3>📊 Recursos Disponíveis</h3>
                 <div>💧 Água: <span id="water-count">0</span></div>
                 <div>🥔 Sementes de Batata: <span id="potato-seeds">0</span></div>
-                <div>🌿 Mudas de O²: <span 
-                id="oxygen-seeds">0</span></div>
+                <div>🌿 Mudas de O²: <span id="oxygen-seeds">0</span></div>
             </div>
         </div>
     </div>
@@ -412,14 +235,12 @@
         <div class="interface-header">🔧 OFICINA DE CONSTRUÇÃO</div>
         <div class="interface-content" style="text-align:center;">
             <div class="status-card">
-                <h3>🛠️ 
-                Receitas Disponíveis</h3>
+                <h3>🛠️ Receitas Disponíveis</h3>
                 <p>💊 Kit Médico: 1 Água + 1 Batata</p>
                 <p>🌿 Filtro de O²: 1 Planta + 1 Água</p>
                 <p>⚡ Painel Solar: Requer Mochila</p>
             </div>
             <button class="action-button" onclick="craftItem('medkit')">💊 Criar Kit Médico</button>
-   
             <button class="action-button" onclick="craftItem('filter')">🌿 Criar Filtro de O²</button>
             <button class="action-button" onclick="craftItem('solar')">⚡ Montar Painel Solar</button>
         </div>
@@ -437,24 +258,9 @@
         const CHUNK_SIZE = 1200; 
 
         const BIOMES = {
-            'zyro_plains': {
-                name: "Planície ZYRO",
-                backgroundGradient: ["#4a5568", "#2d3748"],
-                poiDensity: 4, 
-                enemyDensity: 2, 
-            },
-            'lava_wasteland': {
-                name: "Ermo de Lava",
-                backgroundGradient: ["#ff5722", "#d84315"],
-                poiDensity: 1, 
-                enemyDensity: 5,
-            },
-            'ice_tundra': {
-                name: "Tundra Congelada",
-                backgroundGradient: ["#b3e5fc", "#81d4fa"],
-                poiDensity: 3,
-                enemyDensity: 1,
-            }
+            'zyro_plains': { name: "Planície ZYRO", backgroundGradient: ["#4a5568", "#2d3748"], poiDensity: 4, enemyDensity: 2, },
+            'lava_wasteland': { name: "Ermo de Lava", backgroundGradient: ["#ff5722", "#d84315"], poiDensity: 1, enemyDensity: 5, },
+            'ice_tundra': { name: "Tundra Congelada", backgroundGradient: ["#b3e5fc", "#81d4fa"], poiDensity: 3, enemyDensity: 1, }
         };
 
         const GENERATED_POIS = [
@@ -504,8 +310,7 @@
             { id: 1, text: "Explore a Mina de Água 💧", completed: false },
             { id: 2, text: "Colete 5 unidades de Água 💧", completed: false },
             { id: 3, text: "Plante e colha uma Batata 🥔", completed: false },
-            { id: 
-            4, text: "Equipe uma Mochila 🎒", completed: false },
+            { id: 4, text: "Equipe uma Mochila 🎒", completed: false },
             { id: 5, text: "Repare o Módulo da Nave ⚡", completed: false }
         ];
 
@@ -609,27 +414,22 @@
                 if (!e.active) return;
                 
                 const dx = player.x - e.x;
-          
                 const dy = player.y - e.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 
                 if (dist < 200) {
                     e.x += dx / dist * 0.5;
-      
                     e.y += dy / dist * 0.5;
                     
                     if (dist < 50 && Date.now() - e.lastAttack > 2000) {
-       
                         player.health = Math.max(0, player.health - 10);
                         e.lastAttack = Date.now();
                         showMessage("👾 Criatura alienígena atacou!");
-                        if 
-                        (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
                     }
                 }
                 
                 ctx.fillStyle = "#8b0000";
-         
                 ctx.beginPath();
                 ctx.arc(e.x, e.y, 20, 0, Math.PI * 2);
                 ctx.fill();
@@ -655,8 +455,7 @@
         function updateDayCycle() {
             timeOfDay = (timeOfDay + 0.01) % 24;
             const isNight = timeOfDay >= 18 || timeOfDay < 6;
-            const brightness = isNight ?
-            0.6 : 1;
+            const brightness = isNight ? 0.6 : 1;
             canvas.style.filter = `brightness(${brightness})`;
             
             if (isNight && Math.random() < 0.001) {
@@ -670,7 +469,7 @@
         const stick = document.getElementById("stick");
         let joy = { active: false, x: 0, y: 0 };
         
-        // ** CRÍTICO **: passive: false e e.preventDefault() garantem que o toque controle o stick, e não a rolagem da página.
+        // CRÍTICO: passive: false e e.preventDefault() garantem que o toque controle o stick.
         joystick.addEventListener("touchstart", handleJoystickStart, { passive: false });
         joystick.addEventListener("touchend", handleJoystickEnd);
         joystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
@@ -707,8 +506,7 @@
             
             // Move o Stick Visível
             stick.style.left = rect.width / 2 + dist * Math.cos(angle) + "px";
-            stick.style.top 
-            = rect.height / 2 + dist * Math.sin(angle) + "px";
+            stick.style.top = rect.height / 2 + dist * Math.sin(angle) + "px";
             
             // Atualiza as coordenadas de movimento (joy.x e joy.y)
             joy.x = Math.cos(angle) * (dist / (rect.width / 2));
@@ -767,7 +565,6 @@
                 let dy = player.y - poi.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
-           
                 if (distance < 80 && distance < minDistance) {
                     minDistance = distance;
                     nearestPOI = poi;
@@ -854,7 +651,6 @@
                 let dy = player.y - poi.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
-           
                 if (distance < 200) {
                     nearbyPOIs.push(poi.name);
                 }
@@ -864,12 +660,10 @@
                     let dx = player.x - e.x;
                     let dy = player.y - e.y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
- 
                     
                     if (distance < 200) {
                         nearbyEnemies++;
                     }
-             
                 }
             });
             let message = `🔍 ${currentChunkData.biome.name} (${player.chunkX}, ${player.chunkY}) - Detectado: `;
@@ -977,22 +771,18 @@
                 plotDiv.onclick = () => harvestPlot(index);
                 
                 if (plot === null) {
-    
                     plotDiv.textContent = "🟫";
                 } else if (plot.type === "potato") {
                     if (plot.ready) {
                         plotDiv.className += " ready";
-           
                         plotDiv.textContent = "🥔";
                     } else {
                         plotDiv.className += " planted";
                         plotDiv.textContent = "🌱";
-          
                     }
                 } else if (plot.type === "oxygen-plant") {
                     if (plot.ready) {
                         plotDiv.className += " ready";
-                   
                         plotDiv.textContent = "🌿";
                     } else {
                         plotDiv.className += " planted";
@@ -1111,7 +901,6 @@
             switch(type) {
                 case "medkit":
                     if (gameState.water >= 1 && player.inventory.includes("🥔")) {
-               
                         gameState.water--;
                         player.inventory.splice(player.inventory.indexOf("🥔"), 1);
                         player.hunger = Math.min(100, player.hunger + 20);
@@ -1182,7 +971,6 @@
                 if (plot && !plot.ready) {
                     const growthTime = (now - plot.plantedAt) / 1000;
                     if (growthTime >= 60) { 
-                      
                         plot.ready = true;
                     }
                 }
@@ -1273,7 +1061,6 @@
                 let dy = player.y - poi.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
-           
                 if (distance < minDistance) {
                     minDistance = distance;
                     nearest = poi;
@@ -1381,25 +1168,21 @@
             pointsOfInterest.forEach(poi => {
                 let dx = player.x - poi.x;
                 let dy = player.y - poi.y;
-               
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < 80) {
                     ctx.strokeStyle = "rgba(0, 255, 0, 0.5)";
                     ctx.lineWidth = 3;
-       
                     ctx.beginPath();
                     ctx.arc(poi.x, poi.y, 80, 0, Math.PI * 2);
                     ctx.stroke();
                 }
                 
-         
                 ctx.fillStyle = poi.color;
                 ctx.beginPath();
                 ctx.arc(poi.x, poi.y, 40, 0, Math.PI * 2);
                 ctx.fill();
                 
-  
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 3;
                 ctx.stroke();

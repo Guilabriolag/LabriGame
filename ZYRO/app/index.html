@@ -17,7 +17,8 @@
             height: 100%;
             width: 100%;
             background: #222;
-            touch-action: none;
+            /* CRÍTICO PARA MOBILE: Impede o scroll ao tocar */
+            touch-action: none; 
             font-family: 'Orbitron', Arial, sans-serif;
         }
 
@@ -85,7 +86,8 @@
             background: radial-gradient(circle, rgba(0, 191, 255, 0.3), rgba(0, 191, 255, 0.1));
             border: 3px solid rgba(0, 191, 255, 0.6);
             border-radius: 50%;
-            touch-action: none;
+            /* CRÍTICO PARA MOBILE */
+            touch-action: none; 
         }
 
         #stick {
@@ -112,7 +114,8 @@
             line-height: 60px;
             background: rgba(0, 0, 0, 0.8);
             border: 3px solid;
-            touch-action: none;
+            /* CRÍTICO PARA MOBILE */
+            touch-action: none; 
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -431,15 +434,14 @@
         canvas.height = window.innerHeight;
 
         // --- SISTEMA DE MAPA INFINITO E BIOMAS ---
-        const CHUNK_SIZE = 1200; // Tamanho de cada bloco de mapa (Chunk)
+        const CHUNK_SIZE = 1200; 
 
-        // Definição dos Biomas
         const BIOMES = {
             'zyro_plains': {
                 name: "Planície ZYRO",
                 backgroundGradient: ["#4a5568", "#2d3748"],
-                poiDensity: 4, // Densidade de POIs (Recursos)
-                enemyDensity: 2, // Densidade de Inimigos
+                poiDensity: 4, 
+                enemyDensity: 2, 
             },
             'lava_wasteland': {
                 name: "Ermo de Lava",
@@ -455,14 +457,12 @@
             }
         };
 
-        // Tipos de Pontos de Interesse Geráveis
         const GENERATED_POIS = [
             { type: "water", name: "Mina de Água", icon: "💧", color: "#4fc3f7" },
             { type: "oxygen", name: "Ponto de O²", icon: "🌿", color: "#66bb6a" },
             { type: "equipment", name: "Equipamentos", icon: "🎒", color: "#ffa726" },
         ];
 
-        // Pontos de Interesse Fixos (Apenas no chunk inicial 0,0)
         const BASE_POIS = [
             {x: 600, y: 400, type: "ship", name: "Nave Danificada", icon: "🚀", color: "#ff6b35"},
             {x: 200, y: 600, type: "bunker", name: "Bunker Agrícola", icon: "🏠", color: "#8b4513"},
@@ -474,11 +474,9 @@
             pointsOfInterest: BASE_POIS,
             enemies: [], 
         };
-        // --- FIM SISTEMA DE MAPA INFINITO ---
 
-        // Player e sistema de sobrevivência
         let player = {
-            x: 600, // Posição dentro do chunk (0 a CHUNK_SIZE)
+            x: 600, 
             y: 400,
             r: 25,
             speed: 4,
@@ -490,10 +488,10 @@
             oxygen: 90,
             energy: 70,
             health: 100,
-            chunkX: 0, // Coordenada X do chunk atual
-            chunkY: 0  // Coordenada Y do chunk atual
+            chunkX: 0, 
+            chunkY: 0  
         };
-        // Recursos e equipamentos
+
         let gameState = {
             water: 0,
             potatoSeeds: 2,
@@ -501,7 +499,7 @@
             farmingPlots: Array(16).fill(null),
             lastSurvivalUpdate: Date.now()
         };
-        // Sistema de Missões
+        
         let missions = [
             { id: 1, text: "Explore a Mina de Água 💧", completed: false },
             { id: 2, text: "Colete 5 unidades de Água 💧", completed: false },
@@ -511,11 +509,9 @@
             { id: 5, text: "Repare o Módulo da Nave ⚡", completed: false }
         ];
 
-        // POIs e Inimigos agora são carregados pelo chunk
         let pointsOfInterest = []; 
         let enemies = [];
 
-        // Exibir painel lateral
         const missionPanel = document.createElement("div");
         missionPanel.id = "mission-panel";
         missionPanel.style.cssText = `
@@ -544,9 +540,6 @@
             missionPanel.innerHTML += `<hr>Progresso: ${completedCount}/${missions.length}`;
         }
         
-        // --- FUNÇÕES DE GERAÇÃO DE CHUNK ---
-
-        // Função de hash simples e estável (para que o chunk seja o mesmo toda vez)
         function simpleRandom(seed) {
             let x = Math.sin(seed) * 10000;
             return x - Math.floor(x);
@@ -558,22 +551,18 @@
             const biomeKeys = Object.keys(BIOMES);
             let selectedBiome;
 
-            // Chunk inicial (0,0) é sempre a Planície ZYRO
             if (chunkX === 0 && chunkY === 0) {
                 selectedBiome = BIOMES.zyro_plains;
             } else {
-                // Seleção procedural de bioma (exclui o bioma inicial)
                 const index = Math.floor(rng * (biomeKeys.length - 1)) + 1;
                 selectedBiome = BIOMES[biomeKeys[index]];
             }
 
             let pois = [];
-            // Adiciona POIs fixos apenas no chunk inicial
             if (chunkX === 0 && chunkY === 0) {
                 pois = [...BASE_POIS]; 
             }
 
-            // Geração de POIs aleatórios
             const numPOIs = Math.floor(selectedBiome.poiDensity * simpleRandom(seed + 1) * 0.8 + 1);
             for (let i = 0; i < numPOIs; i++) {
                 const poiType = GENERATED_POIS[Math.floor(simpleRandom(seed + 2 + i) * GENERATED_POIS.length)];
@@ -587,7 +576,6 @@
                 });
             }
 
-            // Geração de Inimigos
             let newEnemies = [];
             const numEnemies = Math.floor(selectedBiome.enemyDensity * simpleRandom(seed + 5) * 0.8 + 1);
             for (let i = 0; i < numEnemies; i++) {
@@ -609,7 +597,6 @@
             const newChunk = generateChunk(chunkX, chunkY);
             currentChunkData = newChunk;
             
-            // Atualiza as listas globais de POIs e Inimigos para o render/interação
             pointsOfInterest = newChunk.pointsOfInterest; 
             enemies = newChunk.enemies;
             
@@ -617,14 +604,10 @@
             showMessage(`Explorando novo bioma: ${newChunk.biome.name}!`);
         }
 
-        // --- FUNÇÕES DE GAMEPLAY (ORIGINAIS) ---
-
         function drawEnemies() {
-            // (SEU CÓDIGO ORIGINAL - FUNCIONA POIS ITERA SOBRE A LISTA ATUALIZADA)
             enemies.forEach(e => {
                 if (!e.active) return;
                 
-                // Seguir o jogador
                 const dx = player.x - e.x;
           
                 const dy = player.y - e.y;
@@ -635,7 +618,6 @@
       
                     e.y += dy / dist * 0.5;
                     
-                    // Atacar se próximo
                     if (dist < 50 && Date.now() - e.lastAttack > 2000) {
        
                         player.health = Math.max(0, player.health - 10);
@@ -646,7 +628,6 @@
                     }
                 }
                 
-                // Desenhar alien
                 ctx.fillStyle = "#8b0000";
          
                 ctx.beginPath();
@@ -656,12 +637,10 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 
-                // Barra de HP
                 ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
                 ctx.fillRect(e.x - 25, e.y - 35, 50, 8);
                 ctx.fillStyle = "#ff0000";
                 ctx.fillRect(e.x - 23, e.y - 33, (e.hp / e.maxHp) * 46, 4);
-                // Olhos amarelos
                 ctx.fillStyle = "#ffff00";
                 ctx.beginPath();
                 ctx.arc(e.x - 8, e.y - 5, 3, 0, Math.PI * 2);
@@ -670,46 +649,39 @@
             });
         }
 
-        // Câmera
         let cam = { x: 0, y: 0 };
-        // Ciclo de Dia e Noite
         let timeOfDay = 12;
-        // 0–24
 
         function updateDayCycle() {
             timeOfDay = (timeOfDay + 0.01) % 24;
             const isNight = timeOfDay >= 18 || timeOfDay < 6;
-            // Ajustar brilho
             const brightness = isNight ?
             0.6 : 1;
             canvas.style.filter = `brightness(${brightness})`;
             
-            // Efeitos noturnos
             if (isNight && Math.random() < 0.001) {
                 showMessage("🌒 A noite cai... o frio aumenta.");
                 player.energy = Math.max(0, player.energy - 2);
             }
         }
 
-        // Controles do joystick
+        // --- INÍCIO: LÓGICA REVISADA DO JOYSTICK (MOBILE) ---
         const joystick = document.getElementById("joystick");
         const stick = document.getElementById("stick");
         let joy = { active: false, x: 0, y: 0 };
         
-        // CORREÇÃO: Usar touchstart/touchend com passive: false para o joystick
+        // ** CRÍTICO **: passive: false e e.preventDefault() garantem que o toque controle o stick, e não a rolagem da página.
         joystick.addEventListener("touchstart", handleJoystickStart, { passive: false });
         joystick.addEventListener("touchend", handleJoystickEnd);
         joystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
 
-        // Função de Início do Joystick
         function handleJoystickStart(e) {
-            e.preventDefault();
+            e.preventDefault(); 
             joy.active = true;
             if (navigator.vibrate) navigator.vibrate(10);
-            if (e.touches) handleJoystickMove(e); // Captura o movimento inicial
+            if (e.touches) handleJoystickMove(e); 
         }
 
-        // Função de Fim do Joystick
         function handleJoystickEnd(e) {
             e.preventDefault();
             joy.active = false;
@@ -719,12 +691,11 @@
             joy.y = 0;
         }
 
-        // Função de Movimento do Joystick
         function handleJoystickMove(e) {
-            e.preventDefault();
+            e.preventDefault(); 
             if (!joy.active) return;
             
-            // Usa o primeiro toque para mobile
+            // Pega as coordenadas de toque (para mobile)
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
@@ -734,33 +705,17 @@
             const dist = Math.min(Math.sqrt(dx * dx + dy * dy), rect.width / 2);
             const angle = Math.atan2(dy, dx);
             
+            // Move o Stick Visível
             stick.style.left = rect.width / 2 + dist * Math.cos(angle) + "px";
             stick.style.top 
             = rect.height / 2 + dist * Math.sin(angle) + "px";
+            
+            // Atualiza as coordenadas de movimento (joy.x e joy.y)
             joy.x = Math.cos(angle) * (dist / (rect.width / 2));
             joy.y = Math.sin(angle) * (dist / (rect.width / 2));
         }
 
-        // Função de ataque
-        function attackNearestEnemy() {
-            const nearest = enemies.find(e => e.active && Math.hypot(player.x - e.x, player.y - e.y) < 100);
-            if (nearest) {
-                nearest.hp -= 15;
-                showMessage("💥 Ataque alienígena!");
-                if (navigator.vibrate) navigator.vibrate(30);
-                if (nearest.hp <= 0) {
-                    nearest.active = false;
-                    showMessage("👾 Inimigo derrotado! +1 recurso raro");
-                    if (player.inventory.length < player.maxInventory) {
-                        player.inventory.push("💎");
-                    }
-                }
-                return true;
-            }
-            return false;
-        }
-
-        // Botões de ação (Corrigido para usar touchstart)
+        // Botões de ação também usam touchstart para mobile
         document.getElementById("buttonA").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(20);
@@ -783,7 +738,26 @@
             if (navigator.vibrate) navigator.vibrate([10, 50, 10]);
             scanArea();
         });
-        // Funções de interação
+        // --- FIM: LÓGICA REVISADA DO JOYSTICK (MOBILE) ---
+
+        function attackNearestEnemy() {
+            const nearest = enemies.find(e => e.active && Math.hypot(player.x - e.x, player.y - e.y) < 100);
+            if (nearest) {
+                nearest.hp -= 15;
+                showMessage("💥 Ataque alienígena!");
+                if (navigator.vibrate) navigator.vibrate(30);
+                if (nearest.hp <= 0) {
+                    nearest.active = false;
+                    showMessage("👾 Inimigo derrotado! +1 recurso raro");
+                    if (player.inventory.length < player.maxInventory) {
+                        player.inventory.push("💎");
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
         function interactWithNearestPOI() {
             let nearestPOI = null;
             let minDistance = Infinity;
@@ -806,8 +780,6 @@
             }
         }
         
-        // (RESTANTE DO SEU CÓDIGO JS ORIGINAL V0.2)
-
         function handlePOIInteraction(poi) {
             switch(poi.type) {
                 case "ship":
@@ -825,9 +797,7 @@
                         player.inventory.push("💧");
                         showMessage("💧 Coletou 3 unidades de água!");
                         missions[0].completed = true;
-                        // Explorou a mina
                         if (gameState.water >= 5) missions[1].completed = true;
-                        // Coletou 5 águas
                         updateMissions();
                         if (navigator.vibrate) navigator.vibrate(30);
                     } else {
@@ -916,7 +886,6 @@
             showMessage(message);
         }
 
-        // Funções da interface da nave
         function updateShipInterface() {
             document.getElementById("hunger-text").textContent = Math.round(player.hunger) + "%";
             document.getElementById("thirst-text").textContent = Math.round(player.thirst) + "%";
@@ -925,14 +894,12 @@
             document.getElementById("inv-count").textContent = player.inventory.length;
             document.getElementById("inv-max").textContent = player.maxInventory;
             
-            // Atualizar slot da mochila
             const backpackSlot = document.getElementById("backpack-slot");
             if (player.backpack) {
                 backpackSlot.className = "equipment-slot equipped";
                 backpackSlot.innerHTML = "<div>Mochila: Equipada ✅</div><div style='font-size: 12px;'>+5 slots de inventário</div>";
             }
             
-            // Atualizar inventário visual
             const inventoryGrid = document.getElementById("ship-inventory");
             inventoryGrid.innerHTML = "";
             for (let i = 0; i < player.maxInventory; i++) {
@@ -952,7 +919,7 @@
                 player.inventory.splice(backpackIndex, 1);
                 player.backpack = "equipped";
                 player.maxInventory = 15;
-                missions[3].completed = true; // Equipou mochila
+                missions[3].completed = true; 
                 updateMissions();
                 showMessage("🎒 Mochila equipada! +5 slots de inventário");
                 updateShipInterface();
@@ -997,7 +964,6 @@
             updateSurvivalHUD();
         }
 
-        // Funções da interface do bunker
         function updateBunkerInterface() {
             document.getElementById("water-count").textContent = gameState.water;
             document.getElementById("potato-seeds").textContent = gameState.potatoSeeds;
@@ -1111,9 +1077,8 @@
             
             if (plot.type === "potato") {
                 player.inventory.push("🥔");
-                gameState.potatoSeeds += 2; // Sementes extras
+                gameState.potatoSeeds += 2; 
                 missions[2].completed = true;
-                // Colheu batata
                 updateMissions();
                 showMessage("🥔 Colheu batata! +2 sementes extras");
             } else if (plot.type === "oxygen-plant") {
@@ -1142,7 +1107,6 @@
             }
         }
 
-        // Funções da oficina
         function craftItem(type) {
             switch(type) {
                 case "medkit":
@@ -1171,7 +1135,7 @@
                     if (player.backpack && player.energy < 100) {
                         player.energy = Math.min(100, player.energy + 50);
                         showMessage("⚡ Painel Solar ativado! Energia restaurada.");
-                        missions[4].completed = true; // Reparo da nave
+                        missions[4].completed = true; 
                         updateMissions();
                     } else if (!player.backpack) {
                         showMessage("❌ Você precisa de uma mochila equipada!");
@@ -1183,17 +1147,15 @@
             updateSurvivalHUD();
         }
 
-        // Função para fechar interfaces
         function closeInterface(interfaceId) {
             document.getElementById(interfaceId).style.display = "none";
         }
 
-        // Sistema de sobrevivência
         function updateSurvival() {
             const now = Date.now();
             const timeDiff = (now - gameState.lastSurvivalUpdate) / 1000;
             
-            if (timeDiff >= 5) { // Atualiza a cada 5 segundos
+            if (timeDiff >= 5) { 
                 player.hunger = Math.max(0, player.hunger - 1);
                 player.thirst = Math.max(0, player.thirst - 1.5);
                 player.oxygen = Math.max(0, player.oxygen - 0.5);
@@ -1201,7 +1163,6 @@
                 gameState.lastSurvivalUpdate = now;
                 updateSurvivalHUD();
                 
-                // Verificar condições críticas
                 if (player.hunger <= 0 || player.thirst <= 0 || player.oxygen <= 0) {
                     showMessage("💀 CRÍTICO! Você precisa de recursos urgentemente!");
                 }
@@ -1215,13 +1176,12 @@
             document.querySelector(".energy").style.width = player.energy + "%";
         }
 
-        // Atualizar crescimento das plantas
         function updatePlants() {
             const now = Date.now();
             gameState.farmingPlots.forEach(plot => {
                 if (plot && !plot.ready) {
                     const growthTime = (now - plot.plantedAt) / 1000;
-                    if (growthTime >= 60) { // 1 minuto para crescer
+                    if (growthTime >= 60) { 
                       
                         plot.ready = true;
                     }
@@ -1229,7 +1189,6 @@
             });
         }
 
-        // Sistema de Salvamento
         function saveGame() {
             const saveData = {
                 player,
@@ -1237,7 +1196,7 @@
                 missions,
                 timeOfDay,
                 enemies,
-                currentChunkData: { // Salvar apenas o necessário para regenerar
+                currentChunkData: { 
                     chunkX: player.chunkX,
                     chunkY: player.chunkY,
                     biomeName: currentChunkData.biome.name 
@@ -1256,7 +1215,6 @@
                     missions = data.missions || missions;
                     timeOfDay = data.timeOfDay || 12;
                     
-                    // Carrega o chunk correto e seus dados procedurais
                     loadChunk(data.player.chunkX, data.player.chunkY);
 
                     showMessage("💾 Progresso carregado!");
@@ -1264,16 +1222,13 @@
                     updateSurvivalHUD();
                 } catch (e) {
                     console.log("Erro ao carregar save:", e);
-                    // Se falhar, carrega o chunk inicial
                     loadChunk(0, 0); 
                 }
             } else {
-                // Se não houver save, carrega o chunk inicial
                  loadChunk(0, 0); 
             }
         }
 
-        // Funções auxiliares
         function showMessage(text) {
             const existing = document.querySelector(".message");
             if (existing) existing.remove();
@@ -1327,9 +1282,9 @@
             return nearest;
         }
 
-        // Loop principal
+        // Loop principal (onde o movimento é aplicado)
         function loop() {
-            // Movimentação
+            // Movimentação do Player: Usa os valores de joy.x e joy.y definidos pelos eventos de toque
             if (joy.x !== 0 || joy.y !== 0) {
                 player.x += joy.x * player.speed;
                 player.y += joy.y * player.speed;
@@ -1367,28 +1322,20 @@
             // --- FIM LÓGICA DE TRANSIÇÃO DE CHUNK ---
 
 
-            // Câmera (Atualizada para usar CHUNK_SIZE)
             cam.x = Math.max(0, Math.min(CHUNK_SIZE - canvas.width, player.x - canvas.width / 2));
             cam.y = Math.max(0, Math.min(CHUNK_SIZE - canvas.height, player.y - canvas.height / 2));
 
-            // Atualizar sistemas
             updateSurvival();
             updatePlants();
             updateDayCycle();
             saveGame();
-            // Limpar tela
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Desenhar mundo com offset da câmera
             ctx.save();
             ctx.translate(-cam.x, -cam.y);
 
-            // Desenhar fundo
             drawBackground();
-            // Desenhar pontos de interesse
             drawPointsOfInterest();
-            // Desenhar inimigos
             drawEnemies();
-            // Desenhar player
             drawPlayer();
 
             ctx.restore();
@@ -1397,14 +1344,12 @@
         }
 
         function drawBackground() {
-            // Fundo do planeta usando as cores do bioma atual
             const gradient = ctx.createRadialGradient(CHUNK_SIZE/2, CHUNK_SIZE/2, 0, CHUNK_SIZE/2, CHUNK_SIZE/2, CHUNK_SIZE);
             gradient.addColorStop(0, currentChunkData.biome.backgroundGradient[0]);
             gradient.addColorStop(1, currentChunkData.biome.backgroundGradient[1]);
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, CHUNK_SIZE, CHUNK_SIZE);
             
-            // Grid de referência
             ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
             ctx.lineWidth = 1;
             for (let x = 0; x <= CHUNK_SIZE; x += 100) {
@@ -1420,24 +1365,20 @@
                 ctx.stroke();
             }
             
-            // Caminhos conectando os pontos (apenas no chunk inicial)
             if (player.chunkX === 0 && player.chunkY === 0) {
                 ctx.strokeStyle = "rgba(139, 115, 85, 0.6)";
                 ctx.lineWidth = 8;
                 ctx.beginPath();
-                // Conectar nave com outros pontos
                 ctx.moveTo(600, 400);
-                ctx.lineTo(200, 600); // Para bunker
+                ctx.lineTo(200, 600); 
                 ctx.moveTo(600, 400);
-                ctx.lineTo(600, 700); // Para oficina
-                // Desenha os caminhos
+                ctx.lineTo(600, 700); 
                 ctx.stroke();
             }
         }
 
         function drawPointsOfInterest() {
             pointsOfInterest.forEach(poi => {
-                // Área de interação
                 let dx = player.x - poi.x;
                 let dy = player.y - poi.y;
                
@@ -1453,30 +1394,24 @@
                 }
                 
          
-                // Base do ponto
                 ctx.fillStyle = poi.color;
                 ctx.beginPath();
                 ctx.arc(poi.x, poi.y, 40, 0, Math.PI * 2);
                 ctx.fill();
                 
   
-                // Borda
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 3;
                 ctx.stroke();
                 
-                // 
-                // Ícone
                 ctx.font = "30px Arial";
                 ctx.fillStyle = "#ffffff";
                 ctx.textAlign = "center";
                 ctx.fillText(poi.icon, poi.x, poi.y + 10);
-                // Nome
                 ctx.font = "14px Arial";
                 ctx.fillStyle = "#ffffff";
                 ctx.fillText(poi.name, poi.x, poi.y + 60);
                 
-                // Efeito de pulso para pontos próximos
                 if (distance < 100) {
                     const pulse = Math.sin(Date.now() / 200) * 0.3 + 0.7;
                     ctx.strokeStyle = `rgba(255, 255, 255, ${pulse})`;
@@ -1489,33 +1424,27 @@
         }
 
         function drawPlayer() {
-            // Sombra
             ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             ctx.beginPath();
             ctx.ellipse(player.x, player.y + player.r + 5, player.r * 0.8, player.r * 0.3, 0, 0, Math.PI * 2);
             ctx.fill();
-            // Corpo do astronauta
             ctx.fillStyle = "#1e40af";
             ctx.beginPath();
             ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
             ctx.fill();
             
-            // Borda do traje
             ctx.strokeStyle = "#3b82f6";
             ctx.lineWidth = 4;
             ctx.stroke();
 
-            // Visor do capacete
             ctx.fillStyle = "rgba(0, 191, 255, 0.8)";
             ctx.beginPath();
             ctx.arc(player.x, player.y - 3, player.r * 0.6, 0, Math.PI * 2);
             ctx.fill();
-            // Reflexo no visor
             ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
             ctx.beginPath();
             ctx.arc(player.x - 8, player.y - 8, player.r * 0.3, 0, Math.PI * 2);
             ctx.fill();
-            // Mochila se equipada
             if (player.backpack) {
                 ctx.fillStyle = "#8b4513";
                 ctx.fillRect(player.x - 15, player.y + 10, 30, 20);
@@ -1524,7 +1453,6 @@
                 ctx.strokeRect(player.x - 15, player.y + 10, 30, 20);
             }
 
-            // Indicador de direção
             if (joy.x !== 0 || joy.y !== 0) {
                 ctx.strokeStyle = "#00ff00";
                 ctx.lineWidth = 3;
@@ -1532,14 +1460,12 @@
                 ctx.moveTo(player.x, player.y);
                 ctx.lineTo(player.x + joy.x * 40, player.y + joy.y * 40);
                 ctx.stroke();
-                // Ponta da seta
                 ctx.fillStyle = "#00ff00";
                 ctx.beginPath();
                 ctx.arc(player.x + joy.x * 40, player.y + joy.y * 40, 3, 0, Math.PI * 2);
                 ctx.fill();
             }
             
-            // Indicador de status crítico
             if (player.hunger <= 20 || player.thirst <= 20 || player.oxygen <= 20) {
                 const flash = Math.sin(Date.now() / 200) > 0;
                 if (flash) {
@@ -1551,7 +1477,6 @@
                 }
             }
             
-            // Barra de vida se ferido
             if (player.health < 100) {
                 ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
                 ctx.fillRect(player.x - 30, player.y - 45, 60, 8);
@@ -1560,13 +1485,12 @@
             }
         }
 
-        // Inicialização
         loadGame();
         updateMissions();
-        showMessage("🚀 Bem-vindo ao ZYRO v0.3! Mapa Infinito Carregado!");
+        showMessage("🚀 ZYRO v0.3 - Controles de Toque Ativos!");
         loop();
 
-        // Prevenção de scroll
+        // Linha crítica para evitar o scroll da página enquanto o usuário joga
         document.addEventListener('touchmove', function(e) {
             e.preventDefault();
         }, { passive: false });
@@ -1574,4 +1498,4 @@
         console.log("🌍 ZYRO v0.3 - Sistema de Chunking/Biomas Carregado!");
         </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac29bfe648f1ff',t:'MTc1OTgyNzE1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-    </html>
+</html>

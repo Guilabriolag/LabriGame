@@ -5,91 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ZYRO v0.2 - Sobrevivência Espacial</title>
     <style>
-        /* (SEU CSS ORIGINAL - SEM ALTERAÇÕES) */
         body {
-            box-sizing: border-box;
+            box-sizing: border-box; [cite: 320]
         }
         
         html, body {
-            margin: 0;
-            padding: 0;
+            margin: 0; [cite: 321]
+            padding: 0; [cite: 322]
             overflow: hidden;
             height: 100%;
             width: 100%;
             background: #222;
             touch-action: none;
-            font-family: 'Orbitron', Arial, sans-serif;
+            font-family: 'Orbitron', Arial, sans-serif; [cite: 322]
         }
 
         canvas {
-            display: block;
-            background: #4caf50;
+            display: block; [cite: 323]
+            background: #4caf50; [cite: 324]
         }
 
         #hud {
             position: absolute;
-            top: env(safe-area-inset-top, 10px);
+            top: env(safe-area-inset-top, 10px); [cite: 325]
             left: 10px;
             color: white;
             font: bold 14px Arial;
             background: rgba(0, 0, 0, 0.8);
             padding: 8px 12px;
-            border-radius: 10px;
+            border-radius: 10px; [cite: 326]
             border: 2px solid #00bfff;
             box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
-            z-index: 100;
+            z-index: 100; [cite: 327]
         }
 
         #survival-hud {
-            position: absolute;
-            top: env(safe-area-inset-top, 10px);
+            position: absolute; [cite: 327]
+            top: env(safe-area-inset-top, 10px); [cite: 328]
             right: 10px;
             background: rgba(0, 0, 0, 0.9);
             color: white;
             padding: 10px;
             border-radius: 10px;
             border: 2px solid #00bfff;
-            font: 12px Arial;
+            font: 12px Arial; [cite: 329]
             z-index: 100;
         }
 
         .survival-bar {
-            width: 100px;
-            height: 8px;
+            width: 100px; [cite: 330]
+            height: 8px; [cite: 330]
             background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
             margin: 3px 0;
-            overflow: hidden;
+            overflow: hidden; [cite: 331]
         }
 
         .survival-fill {
-            height: 100%;
-            transition: width 0.3s ease;
+            height: 100%; [cite: 332]
+            transition: width 0.3s ease; [cite: 332]
         }
 
-        .hunger { background: linear-gradient(90deg, #ff6b35, #f7931e);
+        .hunger { background: linear-gradient(90deg, #ff6b35, #f7931e); [cite: 333]
         }
-        .thirst { background: linear-gradient(90deg, #4fc3f7, #29b6f6);
+        .thirst { background: linear-gradient(90deg, #4fc3f7, #29b6f6); [cite: 334]
         }
-        .oxygen { background: linear-gradient(90deg, #66bb6a, #43a047);
+        .oxygen { background: linear-gradient(90deg, #66bb6a, #43a047); [cite: 335]
         }
-        .energy { background: linear-gradient(90deg, #ffa726, #ff9800);
+        .energy { background: linear-gradient(90deg, #ffa726, #ff9800); [cite: 336]
         }
 
         #joystick {
             position: absolute;
-            bottom: calc(80px + env(safe-area-inset-bottom, 0));
+            bottom: calc(80px + env(safe-area-inset-bottom, 0)); [cite: 337]
             left: 30px;
             width: 120px;
-            height: 120px;
+            height: 120px; [cite: 338]
             background: radial-gradient(circle, rgba(0, 191, 255, 0.3), rgba(0, 191, 255, 0.1));
             border: 3px solid rgba(0, 191, 255, 0.6);
-            border-radius: 50%;
-            touch-action: none;
+            border-radius: 50%; [cite: 339]
+            touch-action: none; [cite: 339]
         }
 
         #stick {
-            position: absolute;
+            position: absolute; [cite: 340]
             left: 50%;
             top: 50%;
             width: 50px;
@@ -97,62 +96,62 @@
             background: linear-gradient(135deg, #00bfff, #0080ff);
             border: 2px solid white;
             border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px rgba(0, 191, 255, 0.6);
+            transform: translate(-50%, -50%); [cite: 341]
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.6); [cite: 342]
         }
 
         .button {
-            position: absolute;
+            position: absolute; [cite: 343]
             width: 60px;
             height: 60px;
             border-radius: 50%;
             color: white;
             font: bold 18px Arial;
             text-align: center;
-            line-height: 60px;
-            background: rgba(0, 0, 0, 0.8);
+            line-height: 60px; [cite: 344]
+            background: rgba(0, 0, 0, 0.8); [cite: 344]
             border: 3px solid;
             touch-action: none;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease; [cite: 345]
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); [cite: 345]
         }
 
         .button:active {
-            transform: scale(0.95);
-            box-shadow: 0 0 15px;
+            transform: scale(0.95); [cite: 346]
+            box-shadow: 0 0 15px; [cite: 346]
         }
 
         #buttonA {
             bottom: calc(80px + env(safe-area-inset-bottom, 0));
-            right: 140px;
+            right: 140px; [cite: 347]
             background: linear-gradient(135deg, #dc2626, #991b1b);
             border-color: #ef4444;
         }
 
         #buttonB {
-            bottom: calc(150px + env(safe-area-inset-bottom, 0));
+            bottom: calc(150px + env(safe-area-inset-bottom, 0)); [cite: 348]
             right: 70px;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             border-color: #3b82f6;
         }
 
         #buttonC {
-            bottom: calc(80px + env(safe-area-inset-bottom, 0));
+            bottom: calc(80px + env(safe-area-inset-bottom, 0)); [cite: 349]
             right: 70px;
             background: linear-gradient(135deg, #16a34a, #15803d);
             border-color: #22c55e;
         }
 
         #buttonD {
-            bottom: calc(150px + env(safe-area-inset-bottom, 0));
+            bottom: calc(150px + env(safe-area-inset-bottom, 0)); [cite: 350]
             right: 140px;
             background: linear-gradient(135deg, #ea580c, #c2410c);
             border-color: #f97316;
         }
 
         .interface-panel {
-            position: absolute;
+            position: absolute; [cite: 351]
             top: 0;
             left: 0;
             width: 100%;
@@ -161,100 +160,100 @@
             color: white;
             display: none;
             z-index: 1000;
-            overflow-y: auto;
+            overflow-y: auto; [cite: 352]
         }
 
         .interface-header {
-            background: linear-gradient(90deg, #0ea5e9, #0284c7);
-            padding: 15px;
+            background: linear-gradient(90deg, #0ea5e9, #0284c7); [cite: 353]
+            padding: 15px; [cite: 353]
             text-align: center;
             font: bold 18px Arial;
-            border-bottom: 3px solid #00bfff;
+            border-bottom: 3px solid #00bfff; [cite: 354]
         }
 
         .interface-content {
-            padding: 20px;
+            padding: 20px; [cite: 355]
         }
 
         .status-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: grid; [cite: 356]
+            grid-template-columns: 1fr 1fr; [cite: 356]
             gap: 15px;
             margin-bottom: 20px;
         }
 
         .status-card {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.5); [cite: 357]
+            padding: 15px; [cite: 357]
             border-radius: 10px;
             border: 2px solid #00bfff;
         }
 
         .status-card h3 {
-            margin: 0 0 10px 0;
-            color: #00bfff;
+            margin: 0 0 10px 0; [cite: 358]
+            color: #00bfff; [cite: 358]
             font-size: 14px;
         }
 
         .equipment-slot {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px dashed #666;
+            background: rgba(255, 255, 255, 0.1); [cite: 359]
+            border: 2px dashed #666; [cite: 359]
             border-radius: 8px;
             padding: 20px;
             text-align: center;
             margin: 10px 0;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease; [cite: 360]
         }
 
         .equipment-slot.equipped {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
+            border-color: #00ff00; [cite: 361]
+            background: rgba(0, 255, 0, 0.1); [cite: 361]
         }
 
         .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            display: grid; [cite: 362]
+            grid-template-columns: repeat(5, 1fr); [cite: 362]
             gap: 5px;
             margin: 15px 0;
         }
 
         .inventory-slot {
-            aspect-ratio: 1;
+            aspect-ratio: 1; [cite: 363]
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid #666;
             border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 20px; [cite: 364]
             cursor: pointer;
         }
 
         .inventory-slot.filled {
-            border-color: #00bfff;
-            background: rgba(0, 191, 255, 0.2);
+            border-color: #00bfff; [cite: 365]
+            background: rgba(0, 191, 255, 0.2); [cite: 365]
         }
 
         .action-button {
-            background: linear-gradient(135deg, #00bfff, #0080ff);
+            background: linear-gradient(135deg, #00bfff, #0080ff); [cite: 366]
             border: none;
             color: white;
             padding: 12px 20px;
             border-radius: 8px;
             font: bold 14px Arial;
             cursor: pointer;
-            margin: 5px;
-            transition: all 0.3s ease;
+            margin: 5px; [cite: 367]
+            transition: all 0.3s ease; [cite: 367]
         }
 
         .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
+            transform: translateY(-2px); [cite: 368]
+            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4); [cite: 368]
         }
 
         .close-button {
-            position: absolute;
+            position: absolute; [cite: 369]
             top: 15px;
             right: 15px;
             background: #dc2626;
@@ -263,23 +262,23 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            font: bold 20px Arial;
+            font: bold 20px Arial; [cite: 370]
             cursor: pointer;
         }
 
         #farming-interface {
-            background: linear-gradient(135deg, #166534, #15803d);
+            background: linear-gradient(135deg, #166534, #15803d); [cite: 371]
         }
 
         .farming-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: grid; [cite: 372]
+            grid-template-columns: repeat(4, 1fr); [cite: 372]
             gap: 10px;
             margin: 20px 0;
         }
 
         .farming-plot {
-            aspect-ratio: 1;
+            aspect-ratio: 1; [cite: 373]
             background: #8b4513;
             border: 3px solid #654321;
             border-radius: 8px;
@@ -288,33 +287,33 @@
             justify-content: center;
             font-size: 30px;
             cursor: pointer;
-            position: relative;
+            position: relative; [cite: 374]
         }
 
         .farming-plot.planted {
-            background: #228b22;
-            border-color: #32cd32;
+            background: #228b22; [cite: 375]
+            border-color: #32cd32; [cite: 375]
         }
 
         .farming-plot.ready {
-            background: #ffd700;
-            border-color: #ffff00;
+            background: #ffd700; [cite: 376]
+            border-color: #ffff00; [cite: 376]
             animation: glow 2s ease-in-out infinite alternate;
         }
 
         @keyframes glow {
-            from { box-shadow: 0 0 5px #ffff00;
+            from { box-shadow: 0 0 5px #ffff00; [cite: 377]
             }
-            to { box-shadow: 0 0 20px #ffff00;
+            to { box-shadow: 0 0 20px #ffff00; [cite: 378]
             }
         }
 
         @keyframes fadeMessage {
-            0% { opacity: 0;
+            0% { opacity: 0; [cite: 379]
             transform: translateX(-50%) translateY(-20px); }
-            20%, 80% { opacity: 1;
+            20%, 80% { opacity: 1; [cite: 380]
             transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0;
+            100% { opacity: 0; [cite: 381]
             transform: translateX(-50%) translateY(-20px); }
         }
     </style>
@@ -330,7 +329,7 @@
 
     <div id="joystick"><div id="stick"></div></div>
    
-    <div id="buttonA" class="button">A</div>
+    <div id="buttonA" class="button">A</div> [cite: 382]
     <div id="buttonB" class="button">B</div>
     <div id="buttonC" class="button">C</div>
     <div id="buttonD" class="button">D</div>
@@ -342,30 +341,30 @@
             <div class="status-grid">
                 <div class="status-card">
  
-                    <h3>📊 Status Vital</h3>
+                    <h3>📊 Status Vital</h3> [cite: 383]
                     <div>Fome: <span id="hunger-text">80%</span></div>
                     <div>Sede: <span id="thirst-text">60%</span></div>
                     <div>Oxigênio: <span id="oxygen-text">90%</span></div>
              
-                    <div>Energia: <span id="energy-text">70%</span></div>
+                    <div>Energia: <span id="energy-text">70%</span></div> [cite: 384]
                 </div>
                 <div class="status-card">
                     <h3>🎒 Equipamentos</h3>
                     <div class="equipment-slot" id="backpack-slot" onclick="equipBackpack()">
               
-                    <div>Mochila: Nenhuma</div>
+                    <div>Mochila: Nenhuma</div> [cite: 385]
                         <div style="font-size: 12px;">Clique para equipar</div>
                     </div>
                 </div>
             </div>
             
  
-            <div class="status-card">
+            <div class="status-card"> [cite: 386]
                 <h3>📦 Inventário (<span id="inv-count">0</span>/<span id="inv-max">10</span>)</h3>
                 <div class="inventory-grid" id="ship-inventory"></div>
             </div>
             
-            <div style="text-align: center;
+            <div style="text-align: center; [cite: 387]
             margin-top: 20px;">
                 <button class="action-button" onclick="consumeItem('food')">🍖 Comer</button>
                 <button class="action-button" onclick="consumeItem('water')">💧 Beber</button>
@@ -375,7 +374,7 @@
     </div>
 
     <div id="bunker-interface" class="interface-panel" style="background: linear-gradient(135deg, #166534, 
-    #15803d);">
+    #15803d);"> [cite: 388]
         <button class="close-button" onclick="closeInterface('bunker-interface')">&times;</button>
         <div class="interface-header">🏠 BUNKER AGRÍCOLA - SISTEMA DE CULTIVO</div>
         <div class="interface-content">
@@ -385,7 +384,7 @@
             </div>
      
         
-            <div style="text-align: center;
+            <div style="text-align: center; [cite: 390]
             margin-top: 20px;">
                 <button class="action-button" onclick="plantCrop('potato')">🥔 Plantar Batata</button>
                 <button class="action-button" onclick="plantCrop('oxygen-plant')">🌿 Plantar O² Plant</button>
@@ -394,12 +393,12 @@
             </div>
       
        
-            <div class="status-card" style="margin-top: 20px;">
+            <div class="status-card" style="margin-top: 20px;"> [cite: 391]
                 <h3>📊 Recursos Disponíveis</h3>
                 <div>💧 Água: <span id="water-count">0</span></div>
                 <div>🥔 Sementes de Batata: <span id="potato-seeds">0</span></div>
                 <div>🌿 Mudas de O²: <span 
-                id="oxygen-seeds">0</span></div>
+                [cite_start]id="oxygen-seeds">0</span></div> [cite: 392]
             </div>
         </div>
     </div>
@@ -410,14 +409,14 @@
         <div class="interface-content" style="text-align:center;">
             <div class="status-card">
                 <h3>🛠️ 
-                Receitas Disponíveis</h3>
+                Receitas Disponíveis</h3> [cite: 393]
                 <p>💊 Kit Médico: 1 Água + 1 Batata</p>
                 <p>🌿 Filtro de O²: 1 Planta + 1 Água</p>
                 <p>⚡ Painel Solar: Requer Mochila</p>
             </div>
             <button class="action-button" onclick="craftItem('medkit')">💊 Criar Kit Médico</button>
    
-            <button class="action-button" onclick="craftItem('filter')">🌿 Criar Filtro de O²</button>
+            <button class="action-button" onclick="craftItem('filter')">🌿 Criar Filtro de O²</button> [cite: 394]
             <button class="action-button" onclick="craftItem('solar')">⚡ Montar Painel Solar</button>
         </div>
     </div>
@@ -425,12 +424,12 @@
     <canvas id="game"></canvas>
 
     <script>
-        const canvas = document.getElementById("game");
-        const ctx = canvas.getContext("2d");
+        const canvas = document.getElementById("game"); [cite: 395]
+        const ctx = canvas.getContext("2d"); [cite: 395]
         canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.height = window.innerHeight; [cite: 396]
         // Configuração do mundo
-        const AREA_WIDTH = 1200, AREA_HEIGHT = 800;
+        const AREA_WIDTH = 1200, AREA_HEIGHT = 800; [cite: 397]
         // Player e sistema de sobrevivência
         let player = {
             x: 600,
@@ -440,14 +439,14 @@
             inventory: [],
             maxInventory: 10,
       
-            backpack: null,
+            backpack: null, [cite: 398]
             hunger: 80,
             thirst: 60,
             oxygen: 90,
             energy: 70,
             health: 100
         };
-        // Recursos e equipamentos
+        // Recursos e equipamentos [cite: 399]
         let gameState = {
             water: 0,
             potatoSeeds: 2,
@@ -455,23 +454,23 @@
             farmingPlots: Array(16).fill(null),
             lastSurvivalUpdate: Date.now()
         };
-        // Sistema de Missões
+        // Sistema de Missões [cite: 400]
         let missions = [
             { id: 1, text: "Explore a Mina de Água 💧", completed: false },
             { id: 2, text: "Colete 5 unidades de Água 💧", completed: false },
             { id: 3, text: "Plante e colha uma Batata 🥔", completed: false },
             { id: 
-            4, text: "Equipe uma Mochila 🎒", completed: false },
+            4, text: "Equipe uma Mochila 🎒", completed: false }, [cite: 401]
             { id: 5, text: "Repare o Módulo da Nave ⚡", completed: false }
         ];
-        // Exibir painel lateral
+        // Exibir painel lateral [cite: 402]
         const missionPanel = document.createElement("div");
-        missionPanel.id = "mission-panel";
+        missionPanel.id = "mission-panel"; [cite: 403]
         missionPanel.style.cssText = `
             position: absolute;
             top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 50%; [cite: 404]
+            transform: translateX(-50%); [cite: 404]
             background: rgba(0,0,0,0.7);
             border: 2px solid #00bfff;
             color: white;
@@ -479,18 +478,18 @@
             border-radius: 10px;
             padding: 10px;
             z-index: 200;
-            width: 220px;
+            width: 220px; [cite: 405]
         `;
         document.body.appendChild(missionPanel);
 
         function updateMissions() {
-            missionPanel.innerHTML = "<b>📜 Missões</b><br>";
-            let completedCount = 0;
+            missionPanel.innerHTML = "<b>📜 Missões</b><br>"; [cite: 406]
+            let completedCount = 0; [cite: 406]
             missions.forEach(m => {
                 if (m.completed) completedCount++;
                 missionPanel.innerHTML += (m.completed ? "✅ " : "🔸 ") + m.text + "<br>";
             });
-            missionPanel.innerHTML += `<hr>Progresso: ${completedCount}/${missions.length}`;
+            missionPanel.innerHTML += `<hr>Progresso: ${completedCount}/${missions.length}`; [cite: 407]
         }
 
         // Pontos de interesse
@@ -498,183 +497,168 @@
             {x: 600, y: 400, type: "ship", name: "Nave Danificada", icon: "🚀", color: "#ff6b35"},
             {x: 200, y: 200, type: "water", name: "Mina de Água", icon: "💧", color: "#4fc3f7"},
             {x: 1000, y: 200, type: "oxygen", name: "Ponto de O²", icon: "🌿", color: 
-            "#66bb6a"},
+            "#66bb6a"}, [cite: 408]
             {x: 200, y: 600, type: "bunker", name: "Bunker Agrícola", icon: "🏠", color: "#8b4513"},
             {x: 1000, y: 600, type: "equipment", name: "Equipamentos", icon: "🎒", color: "#ffa726"},
             {x: 600, y: 700, type: "workshop", name: "Oficina", icon: "🔧", color: "#9ca3af"}
         ];
-        // Criaturas Alienígenas
+        // Criaturas Alienígenas [cite: 409]
         let enemies = [
             { x: 400, y: 300, hp: 30, maxHp: 30, active: true, lastAttack: 0 },
             { x: 900, y: 500, hp: 30, maxHp: 30, active: true, lastAttack: 0 }
         ];
-        function drawEnemies() {
+        function drawEnemies() { [cite: 410]
             enemies.forEach(e => {
                 if (!e.active) return;
                 
                 // Seguir o jogador
                 const dx = player.x - e.x;
           
-                const dy = player.y - e.y;
+                const dy = player.y - e.y; [cite: 411]
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 
                 if (dist < 200) {
                     e.x += dx / dist * 0.5;
       
-                    e.y += dy / dist * 0.5;
+                    e.y += dy / dist * 0.5; [cite: 412]
                     
                     // Atacar se próximo
                     if (dist < 50 && Date.now() - e.lastAttack > 2000) {
        
-                        player.health = Math.max(0, player.health - 10);
+                        player.health = Math.max(0, player.health - 10); [cite: 413]
                         e.lastAttack = Date.now();
                         showMessage("👾 Criatura alienígena atacou!");
                         if 
-                        (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                        (navigator.vibrate) navigator.vibrate([100, 50, 100]); [cite: 414]
                     }
                 }
                 
                 // Desenhar alien
                 ctx.fillStyle = "#8b0000";
          
-                ctx.beginPath();
+                ctx.beginPath(); [cite: 415]
                 ctx.arc(e.x, e.y, 20, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.strokeStyle = "#ff0000";
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#ff0000"; [cite: 416]
+                ctx.lineWidth = 2; [cite: 416]
                 ctx.stroke();
                 
                 // Barra de HP
-                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)"; [cite: 417]
                 ctx.fillRect(e.x - 25, e.y - 35, 50, 8);
-                ctx.fillStyle = "#ff0000";
-                ctx.fillRect(e.x - 23, e.y - 33, (e.hp / e.maxHp) * 46, 4);
+                ctx.fillStyle = "#ff0000"; [cite: 418]
+                ctx.fillRect(e.x - 23, e.y - 33, (e.hp / e.maxHp) * 46, 4); [cite: 418]
                 // Olhos amarelos
-                ctx.fillStyle = "#ffff00";
-                ctx.beginPath();
-                ctx.arc(e.x - 8, e.y - 5, 3, 0, Math.PI * 2);
+                ctx.fillStyle = "#ffff00"; [cite: 419]
+                ctx.beginPath(); [cite: 420]
+                ctx.arc(e.x - 8, e.y - 5, 3, 0, Math.PI * 2); [cite: 421]
                 ctx.arc(e.x + 8, e.y - 5, 3, 0, Math.PI * 2);
                 ctx.fill();
-            });
+            }); [cite: 422]
         }
 
         // Câmera
-        let cam = { x: 0, y: 0 };
+        let cam = { x: 0, y: 0 }; [cite: 423]
         // Ciclo de Dia e Noite
-        let timeOfDay = 12;
+        let timeOfDay = 12; [cite: 423]
         // 0–24
 
         function updateDayCycle() {
-            timeOfDay = (timeOfDay + 0.01) % 24;
-            const isNight = timeOfDay >= 18 || timeOfDay < 6;
+            timeOfDay = (timeOfDay + 0.01) % 24; [cite: 424]
+            const isNight = timeOfDay >= 18 || timeOfDay < 6; [cite: 425]
             // Ajustar brilho
-            const brightness = isNight ?
-            0.6 : 1;
+            const brightness = isNight ? [cite: 426]
+            0.6 : 1; [cite: 427]
             canvas.style.filter = `brightness(${brightness})`;
             
             // Efeitos noturnos
             if (isNight && Math.random() < 0.001) {
                 showMessage("🌒 A noite cai... o frio aumenta.");
-                player.energy = Math.max(0, player.energy - 2);
+                player.energy = Math.max(0, player.energy - 2); [cite: 428]
             }
         }
 
         // Controles do joystick
-        const joystick = document.getElementById("joystick");
-        const stick = document.getElementById("stick");
-        let joy = { active: false, x: 0, y: 0 };
-        
-        // CORREÇÃO: Usar touchstart/touchend com passive: false para o joystick
-        joystick.addEventListener("touchstart", handleJoystickStart, { passive: false });
-        joystick.addEventListener("touchend", handleJoystickEnd);
-        joystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
-
-        // Função de Início do Joystick
-        function handleJoystickStart(e) {
+        const joystick = document.getElementById("joystick"); [cite: 429]
+        const stick = document.getElementById("stick"); [cite: 429]
+        let joy = { active: false, x: 0, y: 0 }; [cite: 430]
+        joystick.addEventListener("touchstart", e => {
             e.preventDefault();
             joy.active = true;
-            if (navigator.vibrate) navigator.vibrate(10);
-            if (e.touches) handleJoystickMove(e); // Captura o movimento inicial
-        }
-
-        // Função de Fim do Joystick
-        function handleJoystickEnd(e) {
+            if (navigator.vibrate) navigator.vibrate(10); [cite: 430]
+        });
+        joystick.addEventListener("touchend", e => {
             e.preventDefault();
             joy.active = false;
             stick.style.left = "50%";
             stick.style.top = "50%";
             joy.x = 0;
-            joy.y = 0;
-        }
-
-        // Função de Movimento do Joystick
-        function handleJoystickMove(e) {
+            joy.y = 0; [cite: 431]
+        });
+        joystick.addEventListener("touchmove", e => {
             e.preventDefault();
             if (!joy.active) return;
             
-            // Usa o primeiro toque para mobile
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
             const rect = joystick.getBoundingClientRect();
-            let dx = clientX - (rect.left + rect.width / 2);
-            let dy = clientY - (rect.top + rect.height / 2);
+            const touch = e.touches[0];
+            let dx = touch.clientX - (rect.left + rect.width / 2);
+        
+            let dy = touch.clientY - (rect.top + rect.height / 2); [cite: 433]
             const dist = Math.min(Math.sqrt(dx * dx + dy * dy), rect.width / 2);
             const angle = Math.atan2(dy, dx);
             
             stick.style.left = rect.width / 2 + dist * Math.cos(angle) + "px";
             stick.style.top 
-            = rect.height / 2 + dist * Math.sin(angle) + "px";
+            = rect.height / 2 + dist * Math.sin(angle) + "px"; [cite: 434]
             joy.x = Math.cos(angle) * (dist / (rect.width / 2));
             joy.y = Math.sin(angle) * (dist / (rect.width / 2));
-        }
-
-        // Função de ataque
+        });
+        // Função de ataque [cite: 435]
         function attackNearestEnemy() {
-            const nearest = enemies.find(e => e.active && Math.hypot(player.x - e.x, player.y - e.y) < 100);
-            if (nearest) {
-                nearest.hp -= 15;
-                showMessage("💥 Ataque alienígena!");
+            const nearest = enemies.find(e => e.active && Math.hypot(player.x - e.x, player.y - e.y) < 100); [cite: 435]
+            if (nearest) { [cite: 436]
+                nearest.hp -= 15; [cite: 437]
+                showMessage("💥 Ataque alienígena!"); [cite: 437]
                 if (navigator.vibrate) navigator.vibrate(30);
                 if (nearest.hp <= 0) {
-                    nearest.active = false;
-                    showMessage("👾 Inimigo derrotado! +1 recurso raro");
+                    nearest.active = false; [cite: 438]
+                    showMessage("👾 Inimigo derrotado! +1 recurso raro"); [cite: 438]
                     if (player.inventory.length < player.maxInventory) {
-                        player.inventory.push("💎");
+                        player.inventory.push("💎"); [cite: 439]
                     }
                 }
-                return true;
+                return true; [cite: 440]
             }
-            return false;
+            return false; [cite: 441]
         }
 
-        // Botões de ação (Corrigido para usar touchstart)
+        // Botões de ação
         document.getElementById("buttonA").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(20);
             if (!attackNearestEnemy()) {
                 interactWithNearestPOI();
-            }
+            } [cite: 441]
         });
         document.getElementById("buttonB").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(15);
-            showMessage("📦 Inventário: " + player.inventory.length + "/" + player.maxInventory);
+            showMessage("📦 Inventário: " + player.inventory.length + "/" + player.maxInventory); [cite: 442]
         });
         document.getElementById("buttonC").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate(15);
-            showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒 Oficina🔧");
+            showMessage("🗺️ Mapa: Nave🚀 Água💧 O²🌿 Bunker🏠 Equip🎒 Oficina🔧"); [cite: 443]
         });
         document.getElementById("buttonD").addEventListener("touchstart", e => {
             e.preventDefault();
             if (navigator.vibrate) navigator.vibrate([10, 50, 10]);
-            scanArea();
+            scanArea(); [cite: 444]
         });
         // Funções de interação
-        function interactWithNearestPOI() {
+        function interactWithNearestPOI() { [cite: 445]
             let nearestPOI = null;
-            let minDistance = Infinity;
+            let minDistance = Infinity; [cite: 446]
             
             pointsOfInterest.forEach(poi => {
                 let dx = player.x - poi.x;
@@ -682,78 +666,76 @@
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
            
-                if (distance < 80 && distance < minDistance) {
+                if (distance < 80 && distance < minDistance) { [cite: 447]
                     minDistance = distance;
                     nearestPOI = poi;
                 }
             });
-            if (nearestPOI) {
-                handlePOIInteraction(nearestPOI);
+            if (nearestPOI) { [cite: 448]
+                handlePOIInteraction(nearestPOI); [cite: 449]
             } else {
-                showMessage("❌ Nenhum ponto de interesse próximo");
+                showMessage("❌ Nenhum ponto de interesse próximo"); [cite: 450]
             }
         }
-        
-        // (RESTANTE DO SEU CÓDIGO JS ORIGINAL V0.2, COMEÇANDO EM handlePOIInteraction)
 
         function handlePOIInteraction(poi) {
             switch(poi.type) {
                 case "ship":
                     document.getElementById("ship-interface").style.display = "block";
-                    updateShipInterface();
+                    updateShipInterface(); [cite: 451]
                     break;
                     
                 case "water":
                     if (player.inventory.length < player.maxInventory) {
-                        gameState.water += 3;
-                        player.inventory.push("💧");
+                        gameState.water += 3; [cite: 452]
+                        player.inventory.push("💧"); [cite: 452]
                         showMessage("💧 Coletou 3 unidades de água!");
-                        missions[0].completed = true;
+                        missions[0].completed = true; [cite: 453]
                         // Explorou a mina
-                        if (gameState.water >= 5) missions[1].completed = true;
+                        if (gameState.water >= 5) missions[1].completed = true; [cite: 454]
                         // Coletou 5 águas
                         updateMissions();
-                        if (navigator.vibrate) navigator.vibrate(30);
+                        if (navigator.vibrate) navigator.vibrate(30); [cite: 455]
                     } else {
-                        showMessage("❌ Inventário cheio!");
+                        showMessage("❌ Inventário cheio!"); [cite: 456]
                     }
                     break;
-                case "oxygen":
+                case "oxygen": [cite: 457]
                     if (player.inventory.length < player.maxInventory) {
-                        gameState.oxygenSeeds += 2;
-                        player.inventory.push("🌿");
+                        gameState.oxygenSeeds += 2; [cite: 458]
+                        player.inventory.push("🌿"); [cite: 458]
                         player.oxygen = Math.min(100, player.oxygen + 20);
                         showMessage("🌿 Coletou mudas de O² e respirou ar puro!");
-                        if (navigator.vibrate) navigator.vibrate(30);
+                        if (navigator.vibrate) navigator.vibrate(30); [cite: 459]
                     } else {
-                        showMessage("❌ Inventário cheio!");
+                        showMessage("❌ Inventário cheio!"); [cite: 460]
                     }
                     break;
-                case "bunker":
+                case "bunker": [cite: 461]
                     document.getElementById("bunker-interface").style.display = "block";
-                    updateBunkerInterface();
+                    updateBunkerInterface(); [cite: 462]
                     break;
                     
                 case "equipment":
                     if (!player.backpack && player.inventory.length < player.maxInventory) {
-                        player.inventory.push("🎒");
+                        player.inventory.push("🎒"); [cite: 463]
                         showMessage("🎒 Encontrou uma mochila! Use na nave para equipar.");
-                        if (navigator.vibrate) navigator.vibrate(30);
+                        if (navigator.vibrate) navigator.vibrate(30); [cite: 464]
                     } else if (player.backpack) {
-                        showMessage("✅ Você já tem uma mochila equipada!");
+                        showMessage("✅ Você já tem uma mochila equipada!"); [cite: 465]
                     } else {
-                        showMessage("❌ Inventário cheio!");
+                        showMessage("❌ Inventário cheio!"); [cite: 466]
                     }
                     break;
-                case "workshop":
+                case "workshop": [cite: 467]
                     document.getElementById("workshop-interface").style.display = "block";
-                    break;
+                    break; [cite: 468]
             }
         }
 
         function scanArea() {
-            let nearbyPOIs = [];
-            let nearbyEnemies = 0;
+            let nearbyPOIs = []; [cite: 469]
+            let nearbyEnemies = 0; [cite: 469]
             
             pointsOfInterest.forEach(poi => {
                 let dx = player.x - poi.x;
@@ -761,197 +743,197 @@
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
            
-                if (distance < 200) {
-                    nearbyPOIs.push(poi.name);
+                if (distance < 200) { [cite: 470]
+                    nearbyPOIs.push(poi.name); [cite: 474]
                 }
             });
-            enemies.forEach(e => {
+            enemies.forEach(e => { [cite: 471]
                 if (e.active) {
                     let dx = player.x - e.x;
                     let dy = player.y - e.y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
  
                     
-                    if (distance < 200) {
+                    if (distance < 200) { [cite: 472]
                         nearbyEnemies++;
                     }
              
-                }
+                } [cite: 473]
             });
-            let message = "🔍 Detectado: ";
+            let message = "🔍 Detectado: "; [cite: 474]
             if (nearbyPOIs.length > 0) {
-                message += nearbyPOIs.join(", ");
+                message += nearbyPOIs.join(", "); [cite: 475]
             }
             if (nearbyEnemies > 0) {
-                message += (nearbyPOIs.length > 0 ? ", " : "") + `${nearbyEnemies} inimigo(s)`;
+                message += (nearbyPOIs.length > 0 ? ", " : "") + `${nearbyEnemies} inimigo(s)`; [cite: 476]
             }
             if (nearbyPOIs.length === 0 && nearbyEnemies === 0) {
-                message = "🔍 Nenhum ponto de interesse detectado";
+                message = "🔍 Nenhum ponto de interesse detectado"; [cite: 477]
             }
             
-            showMessage(message);
+            showMessage(message); [cite: 478]
         }
 
         // Funções da interface da nave
         function updateShipInterface() {
-            document.getElementById("hunger-text").textContent = Math.round(player.hunger) + "%";
+            document.getElementById("hunger-text").textContent = Math.round(player.hunger) + "%"; [cite: 479]
             document.getElementById("thirst-text").textContent = Math.round(player.thirst) + "%";
             document.getElementById("oxygen-text").textContent = Math.round(player.oxygen) + "%";
             document.getElementById("energy-text").textContent = Math.round(player.energy) + "%";
-            document.getElementById("inv-count").textContent = player.inventory.length;
-            document.getElementById("inv-max").textContent = player.maxInventory;
+            document.getElementById("inv-count").textContent = player.inventory.length; [cite: 480]
+            document.getElementById("inv-max").textContent = player.maxInventory; [cite: 480]
             
             // Atualizar slot da mochila
-            const backpackSlot = document.getElementById("backpack-slot");
+            const backpackSlot = document.getElementById("backpack-slot"); [cite: 481]
             if (player.backpack) {
-                backpackSlot.className = "equipment-slot equipped";
-                backpackSlot.innerHTML = "<div>Mochila: Equipada ✅</div><div style='font-size: 12px;'>+5 slots de inventário</div>";
+                backpackSlot.className = "equipment-slot equipped"; [cite: 482]
+                backpackSlot.innerHTML = "<div>Mochila: Equipada ✅</div><div style='font-size: 12px;'>+5 slots de inventário</div>"; [cite: 483]
             }
             
             // Atualizar inventário visual
-            const inventoryGrid = document.getElementById("ship-inventory");
+            const inventoryGrid = document.getElementById("ship-inventory"); [cite: 484]
             inventoryGrid.innerHTML = "";
             for (let i = 0; i < player.maxInventory; i++) {
-                const slot = document.createElement("div");
-                slot.className = "inventory-slot";
+                const slot = document.createElement("div"); [cite: 485]
+                slot.className = "inventory-slot"; [cite: 485]
                 if (i < player.inventory.length) {
-                    slot.className += " filled";
-                    slot.textContent = player.inventory[i];
+                    slot.className += " filled"; [cite: 486]
+                    slot.textContent = player.inventory[i]; [cite: 486]
                 }
-                inventoryGrid.appendChild(slot);
+                inventoryGrid.appendChild(slot); [cite: 487]
             }
         }
 
         function equipBackpack() {
-            const backpackIndex = player.inventory.indexOf("🎒");
+            const backpackIndex = player.inventory.indexOf("🎒"); [cite: 488]
             if (backpackIndex !== -1 && !player.backpack) {
-                player.inventory.splice(backpackIndex, 1);
-                player.backpack = "equipped";
+                player.inventory.splice(backpackIndex, 1); [cite: 489]
+                player.backpack = "equipped"; [cite: 489]
                 player.maxInventory = 15;
                 missions[3].completed = true; // Equipou mochila
-                updateMissions();
-                showMessage("🎒 Mochila equipada! +5 slots de inventário");
+                updateMissions(); [cite: 490]
+                showMessage("🎒 Mochila equipada! +5 slots de inventário"); [cite: 490]
                 updateShipInterface();
             } else if (player.backpack) {
-                showMessage("✅ Mochila já equipada!");
+                showMessage("✅ Mochila já equipada!"); [cite: 491]
             } else {
-                showMessage("❌ Você precisa de uma mochila no inventário!");
+                showMessage("❌ Você precisa de uma mochila no inventário!"); [cite: 492]
             }
         }
 
         function consumeItem(type) {
-            let consumed = false;
+            let consumed = false; [cite: 493]
             if (type === "food") {
-                const foodIndex = player.inventory.findIndex(item => ["🍖", "🥔", "🍞"].includes(item));
-                if (foodIndex !== -1) {
-                    player.inventory.splice(foodIndex, 1);
-                    player.hunger = Math.min(100, player.hunger + 30);
+                const foodIndex = player.inventory.findIndex(item => ["🍖", "🥔", "🍞"].includes(item)); [cite: 494]
+                if (foodIndex !== -1) { [cite: 494]
+                    player.inventory.splice(foodIndex, 1); [cite: 495]
+                    player.hunger = Math.min(100, player.hunger + 30); [cite: 495]
                     consumed = true;
-                    showMessage("🍖 Comeu e recuperou fome!");
+                    showMessage("🍖 Comeu e recuperou fome!"); [cite: 496]
                 }
             } else if (type === "water") {
                 if (gameState.water > 0) {
-                    gameState.water--;
-                    player.thirst = Math.min(100, player.thirst + 40);
+                    gameState.water--; [cite: 497]
+                    player.thirst = Math.min(100, player.thirst + 40); [cite: 497]
                     consumed = true;
-                    showMessage("💧 Bebeu água e recuperou sede!");
+                    showMessage("💧 Bebeu água e recuperou sede!"); [cite: 498]
                 }
             }
             
             if (!consumed) {
-                showMessage("❌ Item não disponível!");
+                showMessage("❌ Item não disponível!"); [cite: 499]
             } else {
                 updateShipInterface();
-                updateSurvivalHUD();
+                updateSurvivalHUD(); [cite: 500]
             }
         }
 
         function rest() {
-            player.energy = Math.min(100, player.energy + 50);
-            showMessage("😴 Descansou e recuperou energia!");
+            player.energy = Math.min(100, player.energy + 50); [cite: 501]
+            showMessage("😴 Descansou e recuperou energia!"); [cite: 501]
             updateShipInterface();
             updateSurvivalHUD();
         }
 
         // Funções da interface do bunker
         function updateBunkerInterface() {
-            document.getElementById("water-count").textContent = gameState.water;
-            document.getElementById("potato-seeds").textContent = gameState.potatoSeeds;
+            document.getElementById("water-count").textContent = gameState.water; [cite: 502]
+            document.getElementById("potato-seeds").textContent = gameState.potatoSeeds; [cite: 502]
             document.getElementById("oxygen-seeds").textContent = gameState.oxygenSeeds;
             
             const farmingGrid = document.getElementById("farming-plots");
-            farmingGrid.innerHTML = "";
-            gameState.farmingPlots.forEach((plot, index) => {
+            farmingGrid.innerHTML = ""; [cite: 503]
+            gameState.farmingPlots.forEach((plot, index) => { [cite: 503]
                 const plotDiv = document.createElement("div");
                 plotDiv.className = "farming-plot";
                 plotDiv.onclick = () => harvestPlot(index);
                 
                 if (plot === null) {
     
-                    plotDiv.textContent = "🟫";
+                    plotDiv.textContent = "🟫"; [cite: 504]
                 } else if (plot.type === "potato") {
                     if (plot.ready) {
                         plotDiv.className += " ready";
            
-                        plotDiv.textContent = "🥔";
+                        plotDiv.textContent = "🥔"; [cite: 505]
                     } else {
                         plotDiv.className += " planted";
                         plotDiv.textContent = "🌱";
           
-                    }
+                    } [cite: 506]
                 } else if (plot.type === "oxygen-plant") {
                     if (plot.ready) {
                         plotDiv.className += " ready";
                    
-                        plotDiv.textContent = "🌿";
+                        plotDiv.textContent = "🌿"; [cite: 507]
                     } else {
                         plotDiv.className += " planted";
-                        plotDiv.textContent = "🌱";
+                        plotDiv.textContent = "🌱"; [cite: 508]
                     }
                 }
                 
-                farmingGrid.appendChild(plotDiv);
+                farmingGrid.appendChild(plotDiv); [cite: 509]
             });
         }
 
         function plantCrop(cropType) {
-            const emptyPlot = gameState.farmingPlots.findIndex(plot => plot === null);
+            const emptyPlot = gameState.farmingPlots.findIndex(plot => plot === null); [cite: 510]
             if (emptyPlot === -1) {
-                showMessage("❌ Não há espaço disponível!");
+                showMessage("❌ Não há espaço disponível!"); [cite: 511]
                 return;
             }
             
             if (cropType === "potato" && gameState.potatoSeeds > 0) {
-                gameState.potatoSeeds--;
+                gameState.potatoSeeds--; [cite: 512]
                 gameState.farmingPlots[emptyPlot] = {
                     type: "potato",
                     plantedAt: Date.now(),
                     ready: false
-                };
-                showMessage("🥔 Batata plantada!");
+                }; [cite: 513]
+                showMessage("🥔 Batata plantada!"); [cite: 513]
             } else if (cropType === "oxygen-plant" && gameState.oxygenSeeds > 0) {
-                gameState.oxygenSeeds--;
+                gameState.oxygenSeeds--; [cite: 514]
                 gameState.farmingPlots[emptyPlot] = {
                     type: "oxygen-plant",
                     plantedAt: Date.now(),
                     ready: false
-                };
-                showMessage("🌿 Planta de O² plantada!");
+                }; [cite: 515]
+                showMessage("🌿 Planta de O² plantada!"); [cite: 515]
             } else {
-                showMessage("❌ Sementes insuficientes!");
+                showMessage("❌ Sementes insuficientes!"); [cite: 516]
             }
             
-            updateBunkerInterface();
+            updateBunkerInterface(); [cite: 517]
         }
 
         function waterPlants() {
             if (gameState.water < 2) {
-                showMessage("❌ Água insuficiente! (Precisa de 2)");
+                showMessage("❌ Água insuficiente! (Precisa de 2)"); [cite: 518]
                 return;
             }
             
-            gameState.water -= 2;
-            let wateredCount = 0;
+            gameState.water -= 2; [cite: 519]
+            let wateredCount = 0; [cite: 519]
             
             gameState.farmingPlots.forEach(plot => {
                 if (plot && !plot.ready) {
@@ -959,62 +941,62 @@
                     wateredCount++;
                 }
             });
-            if (wateredCount > 0) {
-                showMessage(`💧 Regou ${wateredCount} plantas! Crescimento acelerado.`);
+            if (wateredCount > 0) { [cite: 520]
+                showMessage(`💧 Regou ${wateredCount} plantas! Crescimento acelerado.`); [cite: 521]
             } else {
-                showMessage("❌ Nenhuma planta para regar!");
+                showMessage("❌ Nenhuma planta para regar!"); [cite: 522]
             }
             
-            updateBunkerInterface();
+            updateBunkerInterface(); [cite: 523]
         }
 
         function harvestPlot(index) {
-            const plot = gameState.farmingPlots[index];
+            const plot = gameState.farmingPlots[index]; [cite: 524]
             if (!plot) {
-                showMessage("❌ Nenhuma planta neste local!");
+                showMessage("❌ Nenhuma planta neste local!"); [cite: 525]
                 return;
             }
             
             if (!plot.ready) {
-                showMessage("❌ Planta ainda não está pronta!");
+                showMessage("❌ Planta ainda não está pronta!"); [cite: 526]
                 return;
             }
             
             if (player.inventory.length >= player.maxInventory) {
-                showMessage("❌ Inventário cheio!");
+                showMessage("❌ Inventário cheio!"); [cite: 527]
                 return;
             }
             
             if (plot.type === "potato") {
-                player.inventory.push("🥔");
+                player.inventory.push("🥔"); [cite: 528]
                 gameState.potatoSeeds += 2; // Sementes extras
-                missions[2].completed = true;
+                missions[2].completed = true; [cite: 529]
                 // Colheu batata
-                updateMissions();
-                showMessage("🥔 Colheu batata! +2 sementes extras");
+                updateMissions(); [cite: 530]
+                showMessage("🥔 Colheu batata! +2 sementes extras"); [cite: 530]
             } else if (plot.type === "oxygen-plant") {
-                player.oxygen = Math.min(100, player.oxygen + 15);
-                gameState.oxygenSeeds += 1;
-                showMessage("🌿 Colheu planta de O²! Oxigênio restaurado");
+                player.oxygen = Math.min(100, player.oxygen + 15); [cite: 531]
+                gameState.oxygenSeeds += 1; [cite: 531]
+                showMessage("🌿 Colheu planta de O²! Oxigênio restaurado"); [cite: 532]
             }
             
-            gameState.farmingPlots[index] = null;
+            gameState.farmingPlots[index] = null; [cite: 533]
             updateBunkerInterface();
             updateSurvivalHUD();
         }
 
         function harvestAll() {
-            let harvested = 0;
-            gameState.farmingPlots.forEach((plot, index) => {
+            let harvested = 0; [cite: 534]
+            gameState.farmingPlots.forEach((plot, index) => { [cite: 534]
                 if (plot && plot.ready && player.inventory.length < player.maxInventory) {
                     harvestPlot(index);
                     harvested++;
                 }
             });
-            if (harvested === 0) {
-                showMessage("❌ Nenhuma planta pronta ou inventário cheio!");
+            if (harvested === 0) { [cite: 535]
+                showMessage("❌ Nenhuma planta pronta ou inventário cheio!"); [cite: 536]
             } else {
-                showMessage(`🌾 Colheu ${harvested} plantas!`);
+                showMessage(`🌾 Colheu ${harvested} plantas!`); [cite: 537]
             }
         }
 
@@ -1024,85 +1006,85 @@
                 case "medkit":
                     if (gameState.water >= 1 && player.inventory.includes("🥔")) {
                
-                        gameState.water--;
+                        gameState.water--; [cite: 538]
                         player.inventory.splice(player.inventory.indexOf("🥔"), 1);
-                        player.hunger = Math.min(100, player.hunger + 20);
-                        player.health = Math.min(100, player.health + 30);
-                        showMessage("💊 Kit Médico criado e usado!");
+                        player.hunger = Math.min(100, player.hunger + 20); [cite: 539]
+                        player.health = Math.min(100, player.health + 30); [cite: 539]
+                        showMessage("💊 Kit Médico criado e usado!"); [cite: 540]
                     } else {
-                        showMessage("❌ Falta Água ou Batata!");
+                        showMessage("❌ Falta Água ou Batata!"); [cite: 541]
                     }
                     break;
-                case "filter":
+                case "filter": [cite: 542]
                     if (player.inventory.includes("🌿") && gameState.water >= 1) {
-                        player.inventory.splice(player.inventory.indexOf("🌿"), 1);
-                        gameState.water--;
+                        player.inventory.splice(player.inventory.indexOf("🌿"), 1); [cite: 543]
+                        gameState.water--; [cite: 543]
                         player.oxygen = Math.min(100, player.oxygen + 30);
-                        showMessage("🌿 Filtro de O² criado e usado!");
+                        showMessage("🌿 Filtro de O² criado e usado!"); [cite: 544]
                     } else {
-                        showMessage("❌ Recurso insuficiente!");
+                        showMessage("❌ Recurso insuficiente!"); [cite: 545]
                     }
                     break;
-                case "solar":
+                case "solar": [cite: 546]
                     if (player.backpack && player.energy < 100) {
-                        player.energy = Math.min(100, player.energy + 50);
-                        showMessage("⚡ Painel Solar ativado! Energia restaurada.");
+                        player.energy = Math.min(100, player.energy + 50); [cite: 547]
+                        showMessage("⚡ Painel Solar ativado! Energia restaurada."); [cite: 547]
                         missions[4].completed = true; // Reparo da nave
-                        updateMissions();
+                        updateMissions(); [cite: 548]
                     } else if (!player.backpack) {
-                        showMessage("❌ Você precisa de uma mochila equipada!");
+                        showMessage("❌ Você precisa de uma mochila equipada!"); [cite: 549]
                     } else {
-                        showMessage("❌ Energia já está cheia!");
+                        showMessage("❌ Energia já está cheia!"); [cite: 550]
                     }
                     break;
-            }
-            updateSurvivalHUD();
+            } [cite: 551]
+            updateSurvivalHUD(); [cite: 552]
         }
 
         // Função para fechar interfaces
         function closeInterface(interfaceId) {
-            document.getElementById(interfaceId).style.display = "none";
+            document.getElementById(interfaceId).style.display = "none"; [cite: 553]
         }
 
         // Sistema de sobrevivência
         function updateSurvival() {
-            const now = Date.now();
+            const now = Date.now(); [cite: 554]
             const timeDiff = (now - gameState.lastSurvivalUpdate) / 1000;
             
             if (timeDiff >= 5) { // Atualiza a cada 5 segundos
-                player.hunger = Math.max(0, player.hunger - 1);
-                player.thirst = Math.max(0, player.thirst - 1.5);
+                player.hunger = Math.max(0, player.hunger - 1); [cite: 555]
+                player.thirst = Math.max(0, player.thirst - 1.5); [cite: 555]
                 player.oxygen = Math.max(0, player.oxygen - 0.5);
-                player.energy = Math.max(0, player.energy - 0.8);
-                gameState.lastSurvivalUpdate = now;
+                player.energy = Math.max(0, player.energy - 0.8); [cite: 556]
+                gameState.lastSurvivalUpdate = now; [cite: 556]
                 updateSurvivalHUD();
                 
                 // Verificar condições críticas
                 if (player.hunger <= 0 || player.thirst <= 0 || player.oxygen <= 0) {
-                    showMessage("💀 CRÍTICO! Você precisa de recursos urgentemente!");
+                    showMessage("💀 CRÍTICO! Você precisa de recursos urgentemente!"); [cite: 557]
                 }
             }
         }
 
         function updateSurvivalHUD() {
-            document.querySelector(".hunger").style.width = player.hunger + "%";
+            document.querySelector(".hunger").style.width = player.hunger + "%"; [cite: 558]
             document.querySelector(".thirst").style.width = player.thirst + "%";
             document.querySelector(".oxygen").style.width = player.oxygen + "%";
-            document.querySelector(".energy").style.width = player.energy + "%";
+            document.querySelector(".energy").style.width = player.energy + "%"; [cite: 559]
         }
 
         // Atualizar crescimento das plantas
         function updatePlants() {
-            const now = Date.now();
+            const now = Date.now(); [cite: 560]
             gameState.farmingPlots.forEach(plot => {
                 if (plot && !plot.ready) {
                     const growthTime = (now - plot.plantedAt) / 1000;
                     if (growthTime >= 60) { // 1 minuto para crescer
                       
-                        plot.ready = true;
+                        plot.ready = true; [cite: 561]
                     }
                 }
-            });
+            }); [cite: 562]
         }
 
         // Sistema de Salvamento
@@ -1112,41 +1094,41 @@
                 gameState,
                 missions,
                 
-                timeOfDay,
+                timeOfDay, [cite: 563]
                 enemies
-            };
-            localStorage.setItem("zyroSave", JSON.stringify(saveData));
+            }; [cite: 564]
+            localStorage.setItem("zyroSave", JSON.stringify(saveData)); [cite: 564]
         }
 
         function loadGame() {
-            const saved = localStorage.getItem("zyroSave");
-            if (saved) {
+            const saved = localStorage.getItem("zyroSave"); [cite: 565]
+            if (saved) { [cite: 565]
                 try {
-                    const data = JSON.parse(saved);
-                    Object.assign(player, data.player);
+                    const data = JSON.parse(saved); [cite: 566]
+                    Object.assign(player, data.player); [cite: 566]
                     Object.assign(gameState, data.gameState);
                     missions = data.missions || missions;
                     timeOfDay = data.timeOfDay || 12;
-                    if (data.enemies) enemies = data.enemies;
-                    showMessage("💾 Progresso carregado!");
+                    if (data.enemies) enemies = data.enemies; [cite: 567]
+                    showMessage("💾 Progresso carregado!"); [cite: 567]
                     updateMissions();
                     updateSurvivalHUD();
                 } catch (e) {
-                    console.log("Erro ao carregar save:", e);
+                    console.log("Erro ao carregar save:", e); [cite: 568]
                 }
             }
         }
 
         // Funções auxiliares
         function showMessage(text) {
-            const existing = document.querySelector(".message");
-            if (existing) existing.remove();
+            const existing = document.querySelector(".message"); [cite: 569]
+            if (existing) existing.remove(); [cite: 569]
             
             const message = document.createElement("div");
             message.className = "message";
             message.textContent = text;
-            message.style.cssText = `
-                position: fixed;
+            message.style.cssText = ` [cite: 570]
+                position: fixed; [cite: 571]
                 top: 100px;
                 left: 50%;
                 transform: translateX(-50%);
@@ -1154,28 +1136,28 @@
                 color: #00bfff;
                 padding: 10px 20px;
                 border-radius: 10px;
-                border: 2px solid #00bfff;
+                border: 2px solid #00bfff; [cite: 572]
                 font-weight: bold;
                 z-index: 1000;
                 animation: fadeMessage 3s ease-in-out forwards;
             `;
             
             document.body.appendChild(message);
-            setTimeout(() => message.remove(), 3000);
+            setTimeout(() => message.remove(), 3000); [cite: 573]
         }
 
         function updateHUD() {
-            const nearestPOI = findNearestPOI();
-            if (nearestPOI) {
-                document.getElementById("hud").textContent = `Próximo: ${nearestPOI.name}`;
+            const nearestPOI = findNearestPOI(); [cite: 574]
+            if (nearestPOI) { [cite: 574]
+                document.getElementById("hud").textContent = `Próximo: ${nearestPOI.name}`; [cite: 575]
             } else {
-                document.getElementById("hud").textContent = "Área: Planeta ZYRO";
+                document.getElementById("hud").textContent = "Área: Planeta ZYRO"; [cite: 576]
             }
         }
 
         function findNearestPOI() {
-            let nearest = null;
-            let minDistance = 100;
+            let nearest = null; [cite: 577]
+            let minDistance = 100; [cite: 577]
             
             pointsOfInterest.forEach(poi => {
                 let dx = player.x - poi.x;
@@ -1183,98 +1165,98 @@
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
            
-                if (distance < minDistance) {
+                if (distance < minDistance) { [cite: 578]
                     minDistance = distance;
                     nearest = poi;
                 }
             });
-            return nearest;
+            return nearest; [cite: 579]
         }
 
         // Loop principal
         function loop() {
             // Movimentação
             if (joy.x !== 0 || joy.y !== 0) {
-                player.x += joy.x * player.speed;
-                player.y += joy.y * player.speed;
+                player.x += joy.x * player.speed; [cite: 580]
+                player.y += joy.y * player.speed; [cite: 580]
                 
                 // Consumir energia ao se mover
-                player.energy = Math.max(0, player.energy - 0.01);
+                player.energy = Math.max(0, player.energy - 0.01); [cite: 581]
             }
 
             // Limites do mundo
-            player.x = Math.max(player.r, Math.min(AREA_WIDTH - player.r, player.x));
-            player.y = Math.max(player.r, Math.min(AREA_HEIGHT - player.r, player.y));
+            player.x = Math.max(player.r, Math.min(AREA_WIDTH - player.r, player.x)); [cite: 582]
+            player.y = Math.max(player.r, Math.min(AREA_HEIGHT - player.r, player.y)); [cite: 582]
 
             // Câmera
-            cam.x = Math.max(0, Math.min(AREA_WIDTH - canvas.width, player.x - canvas.width / 2));
-            cam.y = Math.max(0, Math.min(AREA_HEIGHT - canvas.height, player.y - canvas.height / 2));
+            cam.x = Math.max(0, Math.min(AREA_WIDTH - canvas.width, player.x - canvas.width / 2)); [cite: 583]
+            cam.y = Math.max(0, Math.min(AREA_HEIGHT - canvas.height, player.y - canvas.height / 2)); [cite: 584]
             // Atualizar sistemas
             updateSurvival();
             updatePlants();
             updateDayCycle();
-            saveGame();
+            saveGame(); [cite: 585]
             // Limpar tela
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height); [cite: 586]
             // Desenhar mundo com offset da câmera
-            ctx.save();
+            ctx.save(); [cite: 587]
             ctx.translate(-cam.x, -cam.y);
 
             // Desenhar fundo
-            drawBackground();
+            drawBackground(); [cite: 588]
             // Desenhar pontos de interesse
-            drawPointsOfInterest();
+            drawPointsOfInterest(); [cite: 589]
             // Desenhar inimigos
-            drawEnemies();
+            drawEnemies(); [cite: 590]
             // Desenhar player
             drawPlayer();
 
             ctx.restore();
             updateHUD();
-            requestAnimationFrame(loop);
+            requestAnimationFrame(loop); [cite: 591]
         }
 
         function drawBackground() {
             // Fundo do planeta
-            const gradient = ctx.createRadialGradient(AREA_WIDTH/2, AREA_HEIGHT/2, 0, AREA_WIDTH/2, AREA_HEIGHT/2, AREA_WIDTH);
+            const gradient = ctx.createRadialGradient(AREA_WIDTH/2, AREA_HEIGHT/2, 0, AREA_WIDTH/2, AREA_HEIGHT/2, AREA_WIDTH); [cite: 592]
             gradient.addColorStop(0, "#4a5568");
             gradient.addColorStop(1, "#2d3748");
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, AREA_WIDTH, AREA_HEIGHT);
+            ctx.fillRect(0, 0, AREA_WIDTH, AREA_HEIGHT); [cite: 593]
             // Grid de referência
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.1)"; [cite: 594]
             ctx.lineWidth = 1;
             for (let x = 0; x <= AREA_WIDTH; x += 100) {
-                ctx.beginPath();
+                ctx.beginPath(); [cite: 595]
                 ctx.moveTo(x, 0);
                 ctx.lineTo(x, AREA_HEIGHT);
                 ctx.stroke();
             }
             for (let y = 0; y <= AREA_HEIGHT; y += 100) {
-                ctx.beginPath();
+                ctx.beginPath(); [cite: 596]
                 ctx.moveTo(0, y);
                 ctx.lineTo(AREA_WIDTH, y);
                 ctx.stroke();
             }
             
             // Caminhos conectando os pontos
-            ctx.strokeStyle = "rgba(139, 115, 85, 0.6)";
+            ctx.strokeStyle = "rgba(139, 115, 85, 0.6)"; [cite: 597]
             ctx.lineWidth = 8;
             ctx.beginPath();
             // Conectar nave com outros pontos
+            ctx.moveTo(600, 400); [cite: 598]
+            ctx.lineTo(200, 200); // Para mina de água [cite: 598]
+            ctx.moveTo(600, 400); [cite: 599]
+            ctx.lineTo(1000, 200); // Para ponto de O² [cite: 599]
+            ctx.moveTo(600, 400); [cite: 600]
+            ctx.lineTo(200, 600); // Para bunker [cite: 600]
             ctx.moveTo(600, 400);
-            ctx.lineTo(200, 200); // Para mina de água
-            ctx.moveTo(600, 400);
-            ctx.lineTo(1000, 200); // Para ponto de O²
-            ctx.moveTo(600, 400);
-            ctx.lineTo(200, 600); // Para bunker
-            ctx.moveTo(600, 400);
-            ctx.lineTo(1000, 600);
+            ctx.lineTo(1000, 600); [cite: 601]
             // Para equipamentos
             ctx.moveTo(600, 400);
-            ctx.lineTo(600, 700);
+            ctx.lineTo(600, 700); [cite: 602]
             // Para oficina
-            ctx.stroke();
+            ctx.stroke(); [cite: 603]
         }
 
         function drawPointsOfInterest() {
@@ -1283,138 +1265,136 @@
                 let dx = player.x - poi.x;
                 let dy = player.y - poi.y;
                
-                let distance = Math.sqrt(dx * dx + dy * dy);
+                let distance = Math.sqrt(dx * dx + dy * dy); [cite: 604]
                 
                 if (distance < 80) {
                     ctx.strokeStyle = "rgba(0, 255, 0, 0.5)";
                     ctx.lineWidth = 3;
        
-                    ctx.beginPath();
+                    ctx.beginPath(); [cite: 605]
                     ctx.arc(poi.x, poi.y, 80, 0, Math.PI * 2);
                     ctx.stroke();
                 }
                 
          
                 // Base do ponto
-                ctx.fillStyle = poi.color;
+                ctx.fillStyle = poi.color; [cite: 606]
                 ctx.beginPath();
                 ctx.arc(poi.x, poi.y, 40, 0, Math.PI * 2);
                 ctx.fill();
                 
   
                 // Borda
-                ctx.strokeStyle = "#ffffff";
+                ctx.strokeStyle = "#ffffff"; [cite: 607]
                 ctx.lineWidth = 3;
                 ctx.stroke();
                 
                 // 
                 // Ícone
-                ctx.font = "30px Arial";
-                ctx.fillStyle = "#ffffff";
+                ctx.font = "30px Arial"; [cite: 608]
+                ctx.fillStyle = "#ffffff"; [cite: 609]
                 ctx.textAlign = "center";
-                ctx.fillText(poi.icon, poi.x, poi.y + 10);
+                ctx.fillText(poi.icon, poi.x, poi.y + 10); [cite: 610]
                 // Nome
-                ctx.font = "14px Arial";
-                ctx.fillStyle = "#ffffff";
-                ctx.fillText(poi.name, poi.x, poi.y + 60);
+                ctx.font = "14px Arial"; [cite: 611]
+                ctx.fillStyle = "#ffffff"; [cite: 611]
+                ctx.fillText(poi.name, poi.x, poi.y + 60); [cite: 611]
                 
                 // Efeito de pulso para pontos próximos
                 if (distance < 100) {
-                    const pulse = Math.sin(Date.now() / 200) * 0.3 + 0.7;
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${pulse})`;
+                    const pulse = Math.sin(Date.now() / 200) * 0.3 + 0.7; [cite: 612]
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${pulse})`; [cite: 612]
                     ctx.lineWidth = 2;
                     ctx.beginPath();
                     ctx.arc(poi.x, poi.y, 50, 0, Math.PI * 2);
-                    ctx.stroke();
+                    ctx.stroke(); [cite: 613]
                 }
-            });
+            }); [cite: 614]
         }
 
         function drawPlayer() {
             // Sombra
-            ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.3)"; [cite: 615]
             ctx.beginPath();
             ctx.ellipse(player.x, player.y + player.r + 5, player.r * 0.8, player.r * 0.3, 0, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fill(); [cite: 616]
             // Corpo do astronauta
-            ctx.fillStyle = "#1e40af";
-            ctx.beginPath();
+            ctx.fillStyle = "#1e40af"; [cite: 617]
+            ctx.beginPath(); [cite: 617]
             ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
             ctx.fill();
             
             // Borda do traje
-            ctx.strokeStyle = "#3b82f6";
+            ctx.strokeStyle = "#3b82f6"; [cite: 618]
             ctx.lineWidth = 4;
             ctx.stroke();
 
             // Visor do capacete
-            ctx.fillStyle = "rgba(0, 191, 255, 0.8)";
+            ctx.fillStyle = "rgba(0, 191, 255, 0.8)"; [cite: 619]
             ctx.beginPath();
             ctx.arc(player.x, player.y - 3, player.r * 0.6, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fill(); [cite: 620]
             // Reflexo no visor
-            ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.4)"; [cite: 621]
             ctx.beginPath();
             ctx.arc(player.x - 8, player.y - 8, player.r * 0.3, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fill(); [cite: 622]
             // Mochila se equipada
             if (player.backpack) {
-                ctx.fillStyle = "#8b4513";
+                ctx.fillStyle = "#8b4513"; [cite: 623]
                 ctx.fillRect(player.x - 15, player.y + 10, 30, 20);
                 ctx.strokeStyle = "#654321";
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 2; [cite: 624]
                 ctx.strokeRect(player.x - 15, player.y + 10, 30, 20);
             }
 
             // Indicador de direção
             if (joy.x !== 0 || joy.y !== 0) {
-                ctx.strokeStyle = "#00ff00";
+                ctx.strokeStyle = "#00ff00"; [cite: 625]
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.moveTo(player.x, player.y);
                 ctx.lineTo(player.x + joy.x * 40, player.y + joy.y * 40);
-                ctx.stroke();
+                ctx.stroke(); [cite: 626]
                 // Ponta da seta
-                ctx.fillStyle = "#00ff00";
+                ctx.fillStyle = "#00ff00"; [cite: 627]
                 ctx.beginPath();
                 ctx.arc(player.x + joy.x * 40, player.y + joy.y * 40, 3, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.fill(); [cite: 628]
             }
             
             // Indicador de status crítico
             if (player.hunger <= 20 || player.thirst <= 20 || player.oxygen <= 20) {
-                const flash = Math.sin(Date.now() / 200) > 0;
-                if (flash) {
-                    ctx.strokeStyle = "#ff0000";
+                const flash = Math.sin(Date.now() / 200) > 0; [cite: 629]
+                if (flash) { [cite: 629]
+                    ctx.strokeStyle = "#ff0000"; [cite: 630]
                     ctx.lineWidth = 3;
                     ctx.beginPath();
                     ctx.arc(player.x, player.y, player.r + 10, 0, Math.PI * 2);
-                    ctx.stroke();
+                    ctx.stroke(); [cite: 631]
                 }
             }
             
             // Barra de vida se ferido
             if (player.health < 100) {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)"; [cite: 632]
                 ctx.fillRect(player.x - 30, player.y - 45, 60, 8);
-                ctx.fillStyle = "#ff0000";
-                ctx.fillRect(player.x - 28, player.y - 43, (player.health / 100) * 56, 4);
+                ctx.fillStyle = "#ff0000"; [cite: 633]
+                ctx.fillRect(player.x - 28, player.y - 43, (player.health / 100) * 56, 4); [cite: 634]
             }
         }
 
         // Inicialização
-        loadGame();
-        updateMissions();
+        loadGame(); [cite: 635]
+        updateMissions(); [cite: 635]
         showMessage("🚀 Bem-vindo ao ZYRO v0.2! Sobreviva e complete as missões!");
-        loop();
-
+        loop(); [cite: 636]
         // Prevenção de scroll
         document.addEventListener('touchmove', function(e) {
             e.preventDefault();
-        }, { passive: false });
-
-        console.log("🌍 ZYRO v0.2 - Sistema completo carregado!");
-        console.log("🎮 Novidades: Missões📜 Dia/Noite🌗 Inimigos👾 Oficina🔧 Salvamento💾");
+        }, { passive: false }); [cite: 637]
+        console.log("🌍 ZYRO v0.2 - Sistema completo carregado!"); [cite: 637]
+        console.log("🎮 Novidades: Missões📜 Dia/Noite🌗 Inimigos👾 Oficina🔧 Salvamento💾"); [cite: 638]
         </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac29bfe648f1ff',t:'MTc1OTgyNzE1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
     </html>

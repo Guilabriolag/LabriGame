@@ -3,14 +3,13 @@ const ctx = canvas.getContext("2d");
 const minimapCanvas = document.getElementById('minimapCanvas');
 const minimapCtx = minimapCanvas.getContext('2d');
 
-// --- [CONFIGURAÇÕES GLOBAIS - MUNDO] ---
+// --- [CONFIGURAÇÕES GLOBAIS] ---
 const WORLD_WIDTH = 50000;
 const WORLD_HEIGHT = 46000;
 const CHUNKS_X = 5;
 const CHUNKS_Y = 5;
 const CHUNK_SIZE_X = WORLD_WIDTH / CHUNKS_X; 
 const CHUNK_SIZE_Y = WORLD_HEIGHT / CHUNKS_Y; 
-const TILE_SIZE = 1000; 
 
 const MINIMAP_SIZE = 150;
 const MINIMAP_RANGE = 15000;
@@ -27,7 +26,7 @@ let player = {
     maxInventory: 10,
     backpack: null, 
     health: 100,
-    energy: 70, // Substitui Fome
+    energy: 70, 
     thirst: 60,
     oxygen: 90,
     input: { dx: 0, dy: 0 },
@@ -36,7 +35,7 @@ let player = {
 
 let gameState = {
     lastSurvivalUpdate: Date.now(),
-    world: null, // Será inicializado no init()
+    world: null, 
     ancestralTreeHealed: false
 };
 
@@ -47,9 +46,7 @@ let missions = [
     { id: 4, text: "Receber a Mochila Veyari 🎒", completed: false },
 ];
 
-let enemies = []; 
 let lastTime = 0; 
-
 
 // --- [CLASSES DE MUNDO] ---
 
@@ -68,10 +65,10 @@ class World {
 
     generatePOIs() {
         return [
-            new POI("Nave Danificada", '🚀', 'ship', 5000, 5000, "#ff6b35"), 
-            new POI("Mina de Água Cristalina", '💧', 'water', 12000, 8000, "#4fc3f7"), 
+            new POI("Nave Danificada (QG)", '🚀', 'ship', 5000, 5000, "#ff6b35"), 
+            new POI("Mina de Água", '💧', 'water', 12000, 8000, "#4fc3f7"), 
             new POI("Floresta de Lúmen", '🌿', 'lumen_forest', 45000, 3000, "#66bb6a"), 
-            new POI("Ruínas Alienígenas (Info)", '🧱', 'ruins', 8000, 20000, "#a78bfa"), 
+            new POI("Ruínas (Comida/Mudas)", '🧱', 'ruins', 8000, 20000, "#a78bfa"), 
             new POI("Laboratório Abandonado", '⚗️', 'workshop', 25000, 23000, "#9ca3af"), 
             new POI("Ferro-Velho (Sucata)", '⚙️', 'scrap_mine', 15000, 42000, "#9ca3af"), 
             new POI("Pântano (Biomaterial)", '🧬', 'swamp_bio', 30000, 35000, "#16a085"), 
@@ -79,7 +76,7 @@ class World {
         ];
     }
     
-    // Funções de Chunk (Mantidas)
+    // Funções de Chunk (mantidas para otimização do mundo grande)
     generateChunks() {
         for (let r = 0; r < CHUNKS_Y; r++) {
             for (let c = 0; c < CHUNKS_X; c++) {
@@ -105,6 +102,7 @@ class World {
         const { c: playerC, r: playerR } = this.getChunkCoords(player.x, player.y);
         const activeChunks = [];
         const activePOIs = [];
+        // Renderiza o chunk atual e os 8 vizinhos
         for (let r = playerR - 1; r <= playerR + 1; r++) {
             for (let c = playerC - 1; c <= playerC + 1; c++) {
                 if (c >= 0 && c < CHUNKS_X && r >= 0 && r < CHUNKS_Y) {
@@ -122,13 +120,12 @@ class World {
 }
 
 
-// --- [MECÂNICA JOYSTICK (OTIMIZADA PARA MOBILE)] ---
+// --- [MECÂNICA JOYSTICK (ESTÁVEL)] ---
 
 const joystick = document.getElementById("joystick");
 const stick = document.getElementById("stick");
 let joy = { active: false, x: 0, y: 0 };
 
-// Event Listeners para Mouse e Toque
 joystick.addEventListener("touchstart", handleJoystickStart, { passive: false });
 joystick.addEventListener("touchend", handleJoystickEnd);
 joystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
@@ -140,7 +137,6 @@ function handleJoystickStart(e) {
     e.preventDefault(); 
     joy.active = true; 
     if (navigator.vibrate) navigator.vibrate(10); 
-    // Garante que o movimento inicial seja capturado se for toque
     if (e.touches) handleJoystickMove(e); 
 }
 
@@ -157,7 +153,6 @@ function handleJoystickMove(e) {
     e.preventDefault();
     if (!joy.active) return;
     
-    // Usa o primeiro toque para mobile, ou o mouse para desktop
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
@@ -165,27 +160,25 @@ function handleJoystickMove(e) {
     let dx = clientX - (rect.left + rect.width / 2);
     let dy = clientY - (rect.top + rect.height / 2);
 
-    // Limita o movimento do stick dentro do joystick
     const dist = Math.min(Math.hypot(dx, dy), rect.width / 2 - 10);
     const angle = Math.atan2(dy, dx);
     
     stick.style.left = rect.width / 2 + dist * Math.cos(angle) + "px";
     stick.style.top = rect.height / 2 + dist * Math.sin(angle) + "px";
     
-    // Normaliza as coordenadas de movimento (-1 a 1)
     joy.x = Math.cos(angle) * (dist / (rect.width / 2 - 10));
     joy.y = Math.sin(angle) * (dist / (rect.width / 2 - 10));
 }
 
 
-// --- [FUNÇÕES DE LÓGICA DO JOGO] ---
+// --- [FUNÇÕES DE LÓGICA E HUD] ---
 
 function getItemName(icon) {
     switch(icon) {
         case "💧": return "Água"; case "🌿": return "Mudas O²"; case "💎": return "Cristal Raro";
         case "⚙️": return "Sucata"; case "🧬": return "Biomaterial"; case "🥔": return "Batata";
         case "🧪": return "Tônico de Cura Veyari"; case "🩹": return "Medkit"; case "💨": return "Filtro O²";
-        case "⚡": return "Painel Solar"; case "🔑": return "Chave";
+        case "⚡": return "Painel Solar";
         default: return "Item Desconhecido";
     }
 }
@@ -201,8 +194,6 @@ function updateMissions() {
 function showMessage(text) {
     const msgPanel = document.getElementById("message-panel");
     msgPanel.textContent = text;
-    // msgPanel.classList.add('flash'); // Efeito de flash opcional
-    // setTimeout(() => { msgPanel.classList.remove('flash'); }, 500);
 }
 
 function closeInterface(id) { 
@@ -224,7 +215,7 @@ function updateShipInterface() {
         player.maxInventory = 10;
     }
     
-    // Atualiza o Grid de Inventário
+    // Atualiza o Grid de Inventário (simplificado)
     const invGrid = document.getElementById("ship-inventory");
     invGrid.innerHTML = "";
     for (let i = 0; i < player.maxInventory; i++) {
@@ -267,7 +258,7 @@ function craftItem(recipe) {
     }
 
     if (canCraft) {
-        // Remove os ingredientes e Adiciona o produto
+        // Remove ingredientes e Adiciona o produto
         for (const [item, count] of Object.entries(required)) {
             for(let i = 0; i < count; i++) {
                 const index = player.inventory.findIndex(invItem => invItem === item);
@@ -286,7 +277,6 @@ function interactWithNearestPOI() {
     let nearestPOI = null;
     const interactDistance = 3000;
     
-    // Verifica se o world foi inicializado
     if (!gameState.world) { showMessage("Aguardando inicialização do mundo."); return; }
     
     const { activePOIs } = gameState.world.getChunksToRender(player);
@@ -316,7 +306,7 @@ function handlePOIInteraction(poi) {
                     showMessage("✅ Antena Reparada! Sinal Veyari detectado em Lúmen (🌿).");
                     updateMissions();
                 } else {
-                    showMessage("⚙️ Antena danificada. Requer 1x Sucata para reparo. (Missão 1)");
+                    showMessage("⚙️ Antena danificada. Requer 1x Sucata para reparo.");
                 }
             } else {
                 document.getElementById("ship-interface").style.display = "block";
@@ -324,14 +314,11 @@ function handlePOIInteraction(poi) {
             }
             break;
             
-        case "water":
-            collectResource("💧", "Água Cristalina"); break;
-        case "scrap_mine":
-            collectResource("⚙️", "Sucata"); break;
-        case "swamp_bio":
-            collectResource("🧬", "Biomaterial Veyari"); break;
-        case "crystal":
-            collectResource("💎", "Cristal Raro"); break;
+        case "water": collectResource("💧", "Água Cristalina"); break;
+        case "scrap_mine": collectResource("⚙️", "Sucata"); break;
+        case "swamp_bio": collectResource("🧬", "Biomaterial Veyari"); break;
+        case "crystal": collectResource("💎", "Cristal Raro"); break;
+        case "ruins": collectResource("🥔", "Batata"); collectResource("🌿", "Mudas O²"); break;
         
         case "lumen_forest":
             if (!gameState.ancestralTreeHealed) {
@@ -368,19 +355,15 @@ function updateSurvival() {
     const elapsed = now - gameState.lastSurvivalUpdate;
 
     if (elapsed >= 1000) {
-        // Decaimento básico (por segundo)
         player.thirst = Math.max(0, player.thirst - 0.2); 
         player.energy = Math.max(0, player.energy - 0.2); 
         player.oxygen = Math.max(0, player.oxygen - 0.1); 
         
-        // Regeneração da Mochila Veyari
         if (player.backpack === 'veyari' && player.health < 100) {
              player.health = Math.min(100, player.health + 0.5); 
         }
 
-        // Penalidades
-        if (player.thirst < 10) { player.health = Math.max(0, player.health - 0.1); }
-        if (player.energy < 10) { player.health = Math.max(0, player.health - 0.1); }
+        if (player.thirst < 10 || player.energy < 10) { player.health = Math.max(0, player.health - 0.1); }
         if (player.oxygen < 10) { player.health = Math.max(0, player.health - 0.5); }
         
         gameState.lastSurvivalUpdate = now;
@@ -399,7 +382,23 @@ function updateSurvivalHUD() {
 }
 
 
-// --- [GAME LOOP E DRAW] ---
+// --- [GAME LOOP E DRAW (VISUALIZAÇÃO DE MAPA GRANDE)] ---
+
+// Função auxiliar para desenhar texto no mapa (POI Names)
+function drawTextOnWorld(text, x, y, size, color = 'white', outline = false) {
+    ctx.font = `${size}px Space Mono`;
+    ctx.textAlign = 'center';
+
+    if (outline) {
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 300;
+        ctx.strokeText(text, x, y);
+    }
+    
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+}
+
 
 function drawMinimap(allPOIs) { 
     minimapCtx.fillStyle = '#0a0a0a';
@@ -409,18 +408,23 @@ function drawMinimap(allPOIs) {
     allPOIs.forEach(poi => {
         const mapX = MINIMAP_SIZE / 2 + (poi.x - player.x) * scale;
         const mapY = MINIMAP_SIZE / 2 + (poi.y - player.y) * scale;
+        
         if (mapX >= 0 && mapX <= MINIMAP_SIZE && mapY >= 0 && mapY <= MINIMAP_SIZE) {
             minimapCtx.fillStyle = poi.color;
             minimapCtx.beginPath();
-            minimapCtx.arc(mapX, mapY, 3, 0, Math.PI * 2);
+            minimapCtx.arc(mapX, mapY, 5, 0, Math.PI * 2); 
             minimapCtx.fill();
+            
+            minimapCtx.fillStyle = 'white';
+            minimapCtx.font = "8px Arial";
+            minimapCtx.fillText(poi.icon, mapX + 5, mapY + 3);
         }
     });
 
-    // Player
+    // Player no Minimapa
     minimapCtx.fillStyle = '#ffffff';
     minimapCtx.beginPath();
-    minimapCtx.arc(MINIMAP_SIZE / 2, MINIMAP_SIZE / 2, 4, 0, Math.PI * 2);
+    minimapCtx.arc(MINIMAP_SIZE / 2, MINIMAP_SIZE / 2, 6, 0, Math.PI * 2); 
     minimapCtx.fill();
 }
 
@@ -431,7 +435,6 @@ function draw() {
     const camY = player.y - canvas.height / 2;
     ctx.translate(-camX, -camY);
     
-    // Garante que o World foi carregado
     if (!gameState.world) return; 
 
     const { activeChunks, activePOIs } = gameState.world.getChunksToRender(player);
@@ -443,26 +446,41 @@ function draw() {
         ctx.strokeRect(chunk.x, chunk.y, chunk.width, chunk.height);
     });
     
-    // 2. Desenha POIs Ativos
+    // 2. Desenha POIs Ativos (Estruturas/Mapa Grande)
     activePOIs.forEach(poi => {
-        ctx.fillStyle = poi.color;
-        // Bioluminescência
+        let poiColor = poi.color;
         if (poi.type === 'lumen_forest' && gameState.ancestralTreeHealed) {
-            ctx.fillStyle = "#00ff00"; 
+            poiColor = "#00ff00"; 
         }
+        
+        // Desenha o círculo do POI
+        ctx.fillStyle = poiColor;
         ctx.beginPath();
         ctx.arc(poi.x, poi.y, 2500, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "white";
-        ctx.font = "1500px Arial";
-        ctx.fillText(poi.icon, poi.x - 700, poi.y + 500);
+        
+        // Desenha o ÍCONE do POI
+        drawTextOnWorld(poi.icon, poi.x, poi.y + 500, 1500, 'white');
+        
+        // Calcula e desenha o NOME e DISTÂNCIA
+        const distanceMeters = Math.hypot(player.x - poi.x, player.y - poi.y);
+        const distanceKm = (distanceMeters / 1000).toFixed(1);
+
+        drawTextOnWorld(poi.name, poi.x, poi.y - 1500, 1000, 'white', true);
+        
+        // Desenha a DISTÂNCIA (visível se estiver a menos de 20 km)
+        if (distanceMeters < 20000) {
+            drawTextOnWorld(`${distanceKm} km`, poi.x, poi.y + 2500, 800, poiColor, true);
+        }
     });
 
-    // 3. Desenha o Player (O Círculo)
+    // 3. Desenha o Player
     ctx.fillStyle = player.backpack === 'veyari' ? "#00ff99" : "#00bfff";
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
     ctx.fill();
+    drawTextOnWorld("ZYRO", player.x, player.y + 500, 1000, 'black');
+    
     ctx.restore();
     
     drawMinimap(gameState.world.pois);
@@ -492,18 +510,18 @@ function gameLoop(timestamp) {
 // --- [INICIALIZAÇÃO DO JOGO] ---
 
 function init() {
-    // 1. Configuração do Canvas para o dispositivo
+    // 1. Configuração do Canvas (Mobile-friendly)
     const resizeCanvas = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     };
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // Chama imediatamente para configurar
+    resizeCanvas(); 
 
     // 2. Inicialização do Mundo
     gameState.world = new World();
     
-    // 3. Estado Inicial do Player
+    // 3. Estado Inicial do Player (recursos iniciais)
     player.inventory.push("⚙️", "🧬", "💧", "🥔"); 
     updateMissions();
     updateSurvivalHUD();
@@ -513,5 +531,4 @@ function init() {
     requestAnimationFrame(gameLoop);
 }
 
-// O jogo começa aqui!
 init();

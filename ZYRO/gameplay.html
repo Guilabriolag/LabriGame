@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYRO - Sobrevivência Alienígena v0.3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="game"></canvas>
+    <canvas id="minimapCanvas"></canvas>
+
+    <div id="hud">
+        <div id="status-bar">
+            <div class="stat-container">❤️ Saúde: <span id="health-text">100%</span><div class="bar" id="health-bar"></div></div>
+            <div class="stat-container">🔋 Energia: <span id="energy-text">70%</span><div class="bar" id="energy-bar"></div></div>
+            <div class="stat-container">💧 Sede: <span id="thirst-text">60%</span><div class="bar" id="thirst-bar"></div></div>
+            <div class="stat-container">🌬️ O²: <span id="oxygen-text">90%</span><div class="bar" id="oxygen-bar"></div></div>
+        </div>
+        <div id="info-panel">
+            <div id="mission-panel">📜 Missões</div>
+            <div id="message-panel">Mensagem do Sistema</div>
+        </div>
+    </div>
+
+    <div id="joystick"><div id="stick"></div></div>
+
+    <div id="action-buttons">
+        <button id="interact-btn" onclick="interactWithNearestPOI()">🔍 Interagir</button>
+        <button id="craft-btn" onclick="document.getElementById('ship-interface').style.display='block'">🛠️ Nave/Craft</button>
+    </div>
+
+    <div id="ship-interface" class="modal">
+        <div class="modal-content">
+            <h2>🚀 Nave Quebrada / Estação de Craft</h2>
+            
+            <h3>Inventário: <span id="inv-count">0</span>/<span id="inv-max">10</span></h3>
+            <div id="backpack-slot">Mochila: Nenhuma/Normal</div>
+            <div id="ship-inventory" class="inventory-grid"></div>
+
+            <h3>🛠️ Crafting</h3>
+            <div id="craft-recipes">
+                <button onclick="craftItem('medkit')">🩹 Medkit (1x Água 💧 + 1x Batata 🥔)</button>
+                <button onclick="craftItem('filter')">💨 Filtro O² (1x Muda 🌿 + 1x Água 💧)</button>
+                <button onclick="craftItem('solar')">⚡ Painel Solar (2x Cristal 💎 + 1x Sucata ⚙️)</button>
+                <hr>
+                <p>Receita Veyari:</p>
+                <button onclick="craftItem('tonic')">🧪 **Tônico de Cura** (1x Biomaterial 🧬 + 1x Água 💧)</button>
+            </div>
+
+            <button onclick="closeInterface('ship-interface')">Fechar</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

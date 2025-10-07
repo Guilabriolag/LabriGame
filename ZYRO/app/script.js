@@ -450,12 +450,26 @@ const canvas = document.getElementById("game");
             draw();
             requestAnimationFrame(gameLoop);
         }
-
-        function init() {
-            window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+function init() {
+            // Garante que o canvas se ajusta ao tamanho da tela (mobile)
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            
+            // Adiciona um listener para ajustar o tamanho se o celular for girado
+            window.addEventListener('resize', () => { 
+                canvas.width = window.innerWidth; 
+                canvas.height = window.innerHeight; 
+            });
 
+            // Itens iniciais para começar a Missão Veyari
+            player.inventory.push("⚙️", "🧬", "💧", "🥔"); 
+            updateMissions();
+            updateSurvivalHUD();
+            showMessage("Bem-vindo a ZYRO! Repare a antena (🚀) para começar a Missão Veyari.");
+            
+            // INICIA O LOOP DE JOGO APÓS A CONFIGURAÇÃO
+            requestAnimationFrame(gameLoop);
+        
             // Itens iniciais para começar a Missão Veyari: Sucata e Biomaterial
             player.inventory.push("⚙️", "🧬", "💧", "🥔"); 
             updateMissions();
